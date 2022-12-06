@@ -37,6 +37,9 @@ weight = 4
     tabWidth = 4
 
 [params]
+  showProjectsList = true
+  projectsUrl = "https://github.com/ptorras"
+  
   colortheme = "dark" # dark, light, white, or classic
   rss = false
   mainSectionTitle = "Thoughts"
@@ -48,7 +51,7 @@ weight = 4
   # Home page settings
   description = "A place where I write about my ongoing research and other endeavours."
   mainSection = "posts" # your main section
-  showAllPostsOnHomePage = false # default
+  showAllPostsOnHomePage = true # default
   postsOnHomePage = 5 # this option will be ignored if showAllPostsOnHomePage is set to true
   tagsOverview = true # show tags overview by default.
 
