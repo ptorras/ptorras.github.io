@@ -1,4 +1,4 @@
-baseurl = "https://ptorras.github.io"
+baseURL = "https://ptorras.github.io"
 title = "Pau Torras"
 languageCode = "en-us"
 paginate = 10
