@@ -12,12 +12,12 @@ weight = 1
 
 [[menu.main]]
 name = "Thoughts"
-url = "/posts"
+url = "./posts"
 weight = 2
 
 [[menu.main]]
 name = "About"
-url = "/resume"
+url = "./resume"
 weight = 4
 
 [markup]
