@@ -37,9 +37,6 @@ weight = 4
     tabWidth = 4
 
 [params]
-  showProjectsList = true
-  projectsUrl = "https://github.com/ptorras"
-  
   colortheme = "dark" # dark, light, white, or classic
   rss = false
   mainSectionTitle = "Thoughts"
