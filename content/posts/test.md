@@ -3,8 +3,8 @@ title: "Inauguration"
 date: 2022-11-18T21:25:00+01:00
 draft: false
 tags:
-  - Meta
-  - Myself
+  - meta
+  - myself
 ---
 
 I have finally decided to build my own blog. Not that I expect to be very active,

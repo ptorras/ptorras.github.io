@@ -42,7 +42,7 @@ weight = 4
   mainSectionTitle = "Thoughts"
 
   showAllPostsArchive = true # default
-  tocInline = true
+  tocInline = false
   mathjax = true
 
   # Home page settings
@@ -79,3 +79,6 @@ weight = 4
   [[params.social]]
     name = "email"
     link = "ptorras <at> cvc.uab.cat"
+  [[params.social]]
+    name = "chess"
+    link = "https://lichess.org/@/KillaVatio"
