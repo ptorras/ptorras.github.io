@@ -1,7 +1,7 @@
 ---
 title: "About Me"
 date: 2022-11-18T22:58:56+01:00
-draft: true
+draft: false
 ---
 
 I am a Computer Vision researcher interested in Document Analysis and

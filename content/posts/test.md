@@ -1,7 +1,7 @@
 ---
 title: "Inauguration"
 date: 2022-11-18T21:25:00+01:00
-draft: true
+draft: false
 tags:
   - Meta
   - Myself
