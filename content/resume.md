@@ -4,12 +4,9 @@ date: 2022-11-18T22:58:56+01:00
 draft: false
 ---
 
-I am a Computer Vision researcher interested in Document Analysis and
+I am a Ph. D. student at the Computer Vision Center working in Document Analysis and
 Optical Music Recognition. I also have interests in other Computer Science-related
 technologies such as Compiler Construction or Language Processing.
-
-I am currently looking for a Ph. D. Scholarship in order to dedicate myself to
-the development of intelligent music reading systems.
 
 # Publications
 
@@ -19,7 +16,9 @@ the development of intelligent music reading systems.
 
 ## Workshops
 
-- P. Torras, M. A. Souibgui, J. Chen, and A. Fornés, **“A Transcription Is All You Need: Learning to Align Through Attention”** in Document Analysis and Recognition – ICDAR 2021 Workshops, vol. 12916, E. H. Barney Smith and U. Pal, Eds. Cham: Springer International Publishing, 2021, pp. 141–146. doi: 10.1007/978-3-030-86198-8_11. 
+- P. Torras, M. A. Souibgui, J. Chen, and A. Fornés, **“A Transcription Is All You Need: Learning to Align Through Attention”** in Document Analysis and Recognition – ICDAR 2021 Workshops, 2021, pp. 141–146. doi: 10.1007/978-3-030-86198-8_11.
+- P. Torras, M. A. Souibgui, J. Chen, and A. Fornés, **"An Evaluation of Handwritten Text Recognition Methods for Historical Ciphered Manuscripts"** in Proceedings of the 7th International Workshop on Historical Document Imaging and Processing, 2023, pp. 7-12. doi:10.1145/3604951.3605509.
+- P. Torras, M. A. Souibgui, J. Chen, S. Biswas, and A. Fornés, **"Segmentation-Free Alignment of Arbitrary Symbol Transcripts to Images"** in Document Analysis and Recognition – ICDAR 2023 Workshops, 2023, pp. 83-93. doi: 10.1007/978-3-031-41498-5_6
 
 ## Other Publications
 
