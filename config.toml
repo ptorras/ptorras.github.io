@@ -1,48 +1,20 @@
 baseURL = "https://ptorras.github.io"
 title = "Pau Torras"
 languageCode = "en-us"
-paginate = 10
-theme = "hugo-theme-cactus"
+theme = "terminal"
+pagination.pagerSize = 5
 copyright = "Pau Torras"
-
-[[menu.main]]
-name = "Home"
-url = "/"
-weight = 1
-
-[[menu.main]]
-name = "Thoughts"
-url = "/posts"
-weight = 2
-
-[[menu.main]]
-name = "About"
-url = "/resume"
-weight = 4
-
-[markup]
-  [markup.tableOfContents]
-    endLevel = 4
-    ordered = false
-    startLevel = 2
-  [markup.highlight]
-    codeFences = true
-    guessSyntax = false
-    hl_Lines = ""
-    lineNoStart = 1
-    lineNos = true
-    lineNumbersInTable = false
-    noClasses = true
-    style = "dracula"
-    tabWidth = 4
 
 [params]
   colortheme = "dark" # dark, light, white, or classic
   rss = false
-  mainSectionTitle = "Thoughts"
+  mainSectionTitle = "Blog"
+  showLanguageSelector = false
+  Toc = true
+  readingTime = true
 
   showAllPostsArchive = true # default
-  tocInline = false
+  tocInline = true
   mathjax = true
 
   # Home page settings
@@ -59,26 +31,66 @@ weight = 4
   show_updated = true # default
   showReadTime = true # default
 
-  [params.comments]
-    enabled = false # default
+[languages]
+  [languages.en]
+    languageName = "English"
+    title = "Pau Torras"
+    [languages.en.params]
+      subtitle = "A place where I write about my ongoing research and other endeavours."
+      owner = "Pau Torras"
+      keywords = ""
+      copyright = "Pau Torras"
+      menuMore = "Show more"
+      readMore = "Read more"
+      readOtherPosts = "Read other posts"
+      newerPosts = "Newer posts"
+      olderPosts = "Older posts"
+      missingContentMessage = "Page not found..."
+      missingBackButtonLabel = "Back to home page"
+      minuteReadingTime = "min read"
+      words = "words"
 
-  # the value of name should be an valid font awesome icon name (brands type)
-  # https://fontawesome.com/icons?d=gallery&s=brands
-  [[params.social]]
-    name = "github"
-    link = "https://github.com/ptorras"
-  [[params.social]]
-    name = "twitter"
-    link = "https://twitter.com/RostarFreeman"
-  [[params.social]]
-    name = "scholar"
-    link = "https://scholar.google.es/citations?user=38hJaFgAAAAJ&hl=ca"
-  [[params.social]]
-    name = "soundcloud"
-    link = "https://soundcloud.com/rostarfreeman"
-  [[params.social]]
-    name = "email"
-    link = "ptorras <at> cvc.uab.cat"
-  [[params.social]]
-    name = "chess"
-    link = "https://lichess.org/@/KillaVatio"
+      [languages.en.params.logo]
+        logoText = "Pau Torras"
+        logoHomeLink = "/"
+
+      [languages.en.menu]
+        [[languages.en.menu.main]]
+          identifier = "about"
+          name = "About Me"
+          url = "/resume"
+        [[languages.en.menu.main]]
+          identifier = "showcase"
+          name = "Blog"
+          url = "/posts"
+  # [languages.ca]
+  #   languageName = "Català"
+  #   title = "Pau Torras"
+  #   [languages.ca.params]
+  #     subtitle = "El lloc on escric bajanades sobre la meva recerca i altres afers que m'ocupin el temps"
+  #     owner = "Pau Torras"
+  #     keywords = ""
+  #     copyright = "Pau Torras"
+  #     menuMore = "Mostrar-ne més"
+  #     readMore = "Llegir-ne més"
+  #     readOtherPosts = "Llegeix altres entrades"
+  #     newerPosts = "Noves entrades"
+  #     olderPosts = "Entrades anteriors"
+  #     missingContentMessage = "Pàgina no trobada..."
+  #     missingBackButtonLabel = "Torna a la pàgina principal"
+  #     minuteReadingTime = "min de lectura"
+  #     words = "paraules"
+
+  #     [languages.ca.params.logo]
+  #       logoText = "Pau Torras"
+  #       logoHomeLink = "/"
+
+  #     [languages.ca.menu]
+  #       [[languages.ca.menu.main]]
+  #         identifier = "about"
+  #         name = "Sobre mi"
+  #         url = "/resume_ca"
+  #       [[languages.ca.menu.main]]
+  #         identifier = "showcase"
+  #         name = "Blog"
+  #         url = "/posts_ca"
