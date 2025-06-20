@@ -1,3 +1,76 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Pau Torras</title><link>https://ptorras.github.io/</link><description>Recent content on Pau Torras</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><copyright>Pau Torras</copyright><lastBuildDate>Fri, 18 Nov 2022 21:25:00 +0100</lastBuildDate><atom:link href="https://ptorras.github.io/index.xml" rel="self" type="application/rss+xml"/><item><title>About Me</title><link>https://ptorras.github.io/resume/</link><pubDate>Fri, 18 Nov 2022 22:58:56 +0100</pubDate><guid>https://ptorras.github.io/resume/</guid><description>I am a Ph. D. student at the Computer Vision Center working in Document Analysis and Optical Music Recognition. I also have interests in other Computer Science-related technologies such as Compiler Construction or Language Processing.
-Publications Conferences P. Torras, A. Baró, L. Kang, and A. Fornés, “On the Integration of Language Models into Sequence to Sequence Architectures for Handwritten Music Recognition” in Proceedings of the 22nd International Society for Music Information Retrieval Conference, Online, Nov.</description></item><item><title>Inauguration</title><link>https://ptorras.github.io/posts/test/</link><pubDate>Fri, 18 Nov 2022 21:25:00 +0100</pubDate><guid>https://ptorras.github.io/posts/test/</guid><description>I have finally decided to build my own blog. Not that I expect to be very active, nor to people to find my writing appealing in any way, shape or form. Nevertheless, I find it very interesting to have a place where I can lay out my thoughts and essentially scream into the endless void that is the Internet.
-That&amp;rsquo;s pretty much it for the introductions. If you&amp;rsquo;re interested to know who I am, do head over to my about page.</description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Pau Torras</title><link>https://ptorras.github.io/</link><description>Recent content on Pau Torras</description><generator>Hugo</generator><language>en</language><copyright>Pau Torras</copyright><lastBuildDate>Fri, 18 Nov 2022 22:58:56 +0100</lastBuildDate><atom:link href="https://ptorras.github.io/index.xml" rel="self" type="application/rss+xml"/><item><title>About Me</title><link>https://ptorras.github.io/resume/</link><pubDate>Fri, 18 Nov 2022 22:58:56 +0100</pubDate><guid>https://ptorras.github.io/resume/</guid><description>&lt;p>I am a Ph. D. student at the Computer Vision Center working in Document Analysis and
+Optical Music Recognition. I also have interests in other Computer Science-related
+technologies such as Compiler Construction or Language Processing.&lt;/p>
+&lt;h2 id="publications">Publications&lt;/h2>
+&lt;h3 id="journals">Journals&lt;/h3>
+&lt;ul>
+&lt;li>P. Torras, S. Biswas and A. Fornés, &lt;strong>A unified representation framework for the evaluation of Optical Music Recognition systems&lt;/strong> in International Journal on Document Analysis and Recognition (IJDAR), Vol 27 No 3 pp. 379-393, 2024&lt;/li>
+&lt;/ul>
+&lt;h3 id="conferences">Conferences&lt;/h3>
+&lt;ul>
+&lt;li>P. Torras, A. Baró, L. Kang, and A. Fornés, &lt;strong>“On the Integration of Language Models into Sequence to Sequence Architectures for Handwritten Music Recognition”&lt;/strong> in Proceedings of the 22nd International Society for Music Information Retrieval Conference, Online, Nov. 07, 2021, pp. 690–696. doi: 10.5281/zenodo.5624451.&lt;/li>
+&lt;/ul>
+&lt;h3 id="workshops">Workshops&lt;/h3>
+&lt;ul>
+&lt;li>P. Torras, M. A. Souibgui, J. Chen, and A. Fornés, &lt;strong>“A Transcription Is All You Need: Learning to Align Through Attention”&lt;/strong> in Document Analysis and Recognition – ICDAR 2021 Workshops, 2021, pp. 141–146. doi: 10.1007/978-3-030-86198-8_11.&lt;/li>
+&lt;li>P. Torras, M. A. Souibgui, J. Chen, and A. Fornés, &lt;strong>&amp;ldquo;An Evaluation of Handwritten Text Recognition Methods for Historical Ciphered Manuscripts&amp;rdquo;&lt;/strong> in Proceedings of the 7th International Workshop on Historical Document Imaging and Processing, 2023, pp. 7-12. doi:10.1145/3604951.3605509.&lt;/li>
+&lt;li>P. Torras, M. A. Souibgui, J. Chen, S. Biswas, and A. Fornés, &lt;strong>&amp;ldquo;Segmentation-Free Alignment of Arbitrary Symbol Transcripts to Images&amp;rdquo;&lt;/strong> in Document Analysis and Recognition – ICDAR 2023 Workshops, 2023, pp. 83-93. doi: 10.1007/978-3-031-41498-5_6&lt;/li>
+&lt;/ul>
+&lt;h3 id="other-publications">Other Publications&lt;/h3>
+&lt;ul>
+&lt;li>A. Baró, C. Badal, P. Torras, A. Fornés, &lt;strong>“Handwritten Historical Music Recognition through Sequence-to-Sequence with Attention Mechanism”&lt;/strong> in Proceedings of the 3rd International Workshop on Reading Music Systems, 2021, pp. 55-59.&lt;/li>
+&lt;li>P. Torras, A. Baró, L. Kang, A. Fornés, &lt;strong>“Improving Handwritten Music Recognition through Language Model Integration”&lt;/strong> in Proceedings of the 4th International Workshop on Reading Music Systems, 2022.&lt;/li>
+&lt;/ul>
+&lt;h2 id="projects">Projects&lt;/h2>
+&lt;ul>
+&lt;li>Bachelor&amp;rsquo;s Thesis: &lt;strong>Integration of Language Models in Sequence to Sequence Optical Music Recognition Systems&lt;/strong>. May be found &lt;a href="https://ddd.uab.cat/pub/tfg/2021/tfg_345965/TFG_informefinal.pdf">here&lt;/a> (awarded a 9.6/10)&lt;/li>
+&lt;li>Master&amp;rsquo;s Thesis: &lt;strong>Music Tree Notation for End-to-End Optical Music Recognition&lt;/strong>. May be found &lt;a href="https://ptorras.github.io/docs/MasterThesis.pdf">here&lt;/a> (awarded a 10/10)&lt;/li>
+&lt;/ul>
+&lt;h2 id="awards">Awards&lt;/h2>
+&lt;ul>
+&lt;li>Extraordinary Academic Achievement Award, B. Sc. in Computer Science (2021)&lt;/li>
+&lt;li>Best Master&amp;rsquo;s Thesis Award, M. Sc. in Computer Vision (2022)&lt;/li>
+&lt;/ul>
+&lt;h2 id="studies">Studies&lt;/h2>
+&lt;h3 id="academic">Academic&lt;/h3>
+&lt;ul>
+&lt;li>B. Sc. in Computer Science by Universitat Autònoma de Barcelona (2021).&lt;/li>
+&lt;li>M. Sc. in Computer Vision by Universitat Autònoma de Barcelona, Universitat
+Politècnica de Catalunya, Universitat Pompeu Fabra and Universitat Oberta de
+Catalunya (2022).&lt;/li>
+&lt;/ul>
+&lt;h3 id="other">Other&lt;/h3>
+&lt;ul>
+&lt;li>Federative Chess Instructor Course &amp;ndash; Registered in the Catalan Sport Professionals Registry (ROPEC) with number 039549 (2019)&lt;/li>
+&lt;/ul>
+&lt;h2 id="experience">Experience&lt;/h2>
+&lt;ul>
+&lt;li>Chess Instructor at Club Escacs Montmeló (2018 - ongoing)&lt;/li>
+&lt;li>Intern at Computer Vision Center (Universitat Autònoma de Barcelona) working
+in the &lt;a href="https://de-crypt.org/team.php">Decrypt&lt;/a> project
+(September 2020 - April 2021).&lt;/li>
+&lt;li>Intern at the Computer Vision Center (Universitat Autònoma de Barcelona)
+working in Optical Music Recognition (June 2021 - October 2021)&lt;/li>
+&lt;/ul>
+&lt;h2 id="skills">Skills&lt;/h2>
+&lt;ul>
+&lt;li>Tools: Python, Pytorch, OpenCV, C/C++, Keras, Numpy, Matlab&lt;/li>
+&lt;li>Fields: Computer Vision, Optical Music Recognition, Document Analysis&lt;/li>
+&lt;li>Hobbies: Self-taught music theory and piano, 1898 peak FIDE chess rating&lt;/li>
+&lt;/ul>
+&lt;h2 id="languages">Languages&lt;/h2>
+&lt;ul>
+&lt;li>Catalan: Native Level&lt;/li>
+&lt;li>Spanish: Native Level&lt;/li>
+&lt;li>English: Certified C1 Level&lt;/li>
+&lt;li>French: Basic Level&lt;/li>
+&lt;li>Italian: Basic Level&lt;/li>
+&lt;/ul>
+&lt;h2 id="traits">Traits&lt;/h2>
+&lt;p>Hard-working, quick learner, responsible, creative, organised, enthusiastic.&lt;/p></description></item><item><title>Inauguration</title><link>https://ptorras.github.io/posts/test/</link><pubDate>Fri, 18 Nov 2022 21:25:00 +0100</pubDate><guid>https://ptorras.github.io/posts/test/</guid><description>&lt;p>I have finally decided to build my own blog. Not that I expect to be very active,
+nor to people to find my writing appealing in any way, shape or form. Nevertheless,
+I find it very interesting to have a place where I can lay out my thoughts and
+essentially scream into the endless void that is the Internet.&lt;/p>
+&lt;p>That&amp;rsquo;s pretty much it for the introductions. If you&amp;rsquo;re interested to know who
+I am, do head over to my &lt;a href="https://ptorras.github.io/resume/">about&lt;/a> page. If you want to keep reading,
+just scroll around and pick whatever you fancy most.&lt;/p></description></item></channel></rss>
