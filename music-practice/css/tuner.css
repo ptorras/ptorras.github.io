@@ -1,0 +1,95 @@
+/* Guitar tuner panel (js/panels/tuner.js). Uses the app's color variables with fallbacks. */
+.tuner {
+  --tn-ink: var(--ink, #1f2328);
+  --tn-muted: var(--muted, #6b7280);
+  --tn-line: var(--line, #e3e3de);
+  --tn-panel: var(--panel, #fff);
+  --tn-good: var(--good, #16a34a);
+  --tn-warn: var(--warn, #d97706);
+  --tn-bad: var(--bad, #dc2626);
+  max-width: 760px; margin: 0 auto; padding: 24px 16px 32px;
+  display: flex; flex-direction: column; gap: 16px;
+}
+.tuner .tn-body { display: flex; flex-direction: column; gap: 16px; }
+.tuner.off .tn-body { opacity: .35; pointer-events: none; }
+.tuner .tn-label { color: var(--tn-muted); font-size: 12px; text-transform: uppercase; letter-spacing: .05em; }
+
+/* Message when the input is off */
+.tn-msg {
+  background: var(--tn-panel); border: 1px solid var(--tn-line); border-radius: 12px;
+  padding: 20px 24px; text-align: center;
+}
+.tn-msg h3 { margin: 4px 0 6px; font-size: 18px; }
+.tn-msg p { margin: 0 auto 14px; color: var(--tn-muted); max-width: 520px; line-height: 1.45; }
+.tn-msg-icon { font-size: 28px; color: var(--tn-muted); }
+
+/* Main display */
+.tn-display {
+  background: var(--tn-panel); border: 1px solid var(--tn-line); border-radius: 14px;
+  padding: 18px 28px 20px; display: flex; flex-direction: column; align-items: center; gap: 10px;
+  transition: border-color .2s, box-shadow .2s;
+}
+.tn-display.intune { border-color: var(--tn-good); box-shadow: 0 0 0 3px rgba(22, 163, 74, .15); }
+.tn-notewrap { display: flex; align-items: center; gap: 28px; }
+.tn-note { display: flex; align-items: baseline; font-variant-numeric: tabular-nums; min-width: 2.6em; justify-content: center; }
+.tn-name { font-size: 96px; font-weight: 700; line-height: 1; letter-spacing: -.02em; }
+.tn-oct { font-size: 32px; font-weight: 600; color: var(--tn-muted); margin-left: 4px; }
+.tn-display.intune .tn-name { color: var(--tn-good); }
+.tn-display.idle .tn-name, .tn-display.idle .tn-oct { color: #c5c5bf; }
+.tn-dir { font-size: 30px; color: #d6d6d0; width: 1em; text-align: center; transition: color .15s; }
+.tn-dir.on { color: var(--tn-warn); }
+.tn-cents { font-size: 16px; font-weight: 600; color: var(--tn-muted); min-height: 1.3em; font-variant-numeric: tabular-nums; }
+.tn-display.intune .tn-cents { color: var(--tn-good); }
+
+.tn-scale { position: relative; width: 100%; height: 64px; margin-top: 4px; }
+.tn-zone {
+  position: absolute; top: 0; height: 40px; background: rgba(22, 163, 74, .14);
+  border-left: 1px solid rgba(22, 163, 74, .45); border-right: 1px solid rgba(22, 163, 74, .45);
+}
+.tn-ticks { position: absolute; inset: 0; }
+.tn-ticks span { position: absolute; top: 0; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; }
+.tn-ticks i { display: block; width: 1px; height: 16px; background: #b8b8b2; margin-top: 12px; }
+.tn-ticks span.major i { height: 28px; margin-top: 6px; background: #8a8a85; }
+.tn-ticks b { font-weight: 500; font-size: 11px; color: var(--tn-muted); margin-top: 6px; }
+.tn-needle {
+  position: absolute; top: -2px; left: 50%; width: 4px; height: 44px; margin-left: -2px; border-radius: 2px;
+  background: var(--tn-bad); transition: left .08s linear, background .2s;
+}
+.tn-display.intune .tn-needle { background: var(--tn-good); }
+.tn-display.idle .tn-needle { background: #c5c5bf; }
+
+.tn-strobe {
+  width: 100%; height: 14px; border-radius: 7px; opacity: .8;
+  background-image: repeating-linear-gradient(90deg, var(--tn-ink) 0 10px, transparent 10px 20px);
+  background-color: #ecece7;
+}
+.tn-display.intune .tn-strobe { background-image: repeating-linear-gradient(90deg, var(--tn-good) 0 10px, transparent 10px 20px); }
+.tn-display.idle .tn-strobe { opacity: .25; }
+.tn-freq { color: var(--tn-muted); font-size: 13px; font-variant-numeric: tabular-nums; }
+
+/* Strings */
+.tn-strings { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; justify-content: center; }
+.tn-strings .tn-label { margin-right: 4px; }
+.tn-string {
+  min-width: 52px; padding: 8px 10px; border-radius: 10px; display: inline-flex; align-items: baseline;
+  justify-content: center; gap: 1px; font-size: 18px; font-weight: 600; transition: background .15s, border-color .15s;
+}
+.tn-string .so { font-size: 12px; color: var(--tn-muted); font-weight: 500; }
+.tn-string.active { border-color: var(--tn-ink); background: #f1f1ec; }
+.tn-string.good { border-color: var(--tn-good); background: #dcfce7; color: #166534; }
+.tn-string.locked { border-color: var(--accent, #2563eb); box-shadow: inset 0 0 0 1px var(--accent, #2563eb); }
+.tn-string.tn-auto { font-size: 13px; font-weight: 500; min-width: 0; }
+.tn-string.tn-auto.active { background: var(--tn-ink); color: #fff; border-color: var(--tn-ink); }
+
+/* Level meter */
+.tn-level { display: flex; align-items: center; gap: 10px; }
+.tn-level-track { flex: 1; height: 8px; border-radius: 4px; background: #ecece7; overflow: hidden; }
+.tn-level-bar { height: 100%; width: 0; background: linear-gradient(90deg, #22c55e, #22c55e 70%, #eab308 90%, #ef4444); background-size: 100vw 100%; transition: width .06s linear; }
+.tn-level-bar.hot { background: var(--tn-bad); }
+.tn-level-db { width: 52px; text-align: right; font-size: 12px; color: var(--tn-muted); font-variant-numeric: tabular-nums; }
+
+@media (max-width: 520px) {
+  .tn-name { font-size: 72px; }
+  .tn-display { padding: 14px 16px; }
+  .tn-notewrap { gap: 14px; }
+}
