@@ -8,12 +8,13 @@
 // On localhost the network is tried first, so edits show up on reload during development.
 
 // <generated>
-const VERSION = '234b04306361';
+const VERSION = '0bd993eb5385';
 const FILES = [
   "./",
   "css/app.css",
   "css/guitar.css",
   "css/panels.css",
+  "css/rhythm.css",
   "css/tuner.css",
   "icons/apple-touch-icon.png",
   "icons/icon-192.png",
@@ -45,6 +46,7 @@ const FILES = [
   "js/guitar/voicings.js",
   "js/io/audio.js",
   "js/io/controls.js",
+  "js/io/drums.js",
   "js/io/guitarinput.js",
   "js/io/midi.js",
   "js/io/pitch-core.js",
@@ -57,6 +59,8 @@ const FILES = [
   "js/panels/ear-logic.js",
   "js/panels/eartraining.js",
   "js/panels/panel.js",
+  "js/panels/rhythm-logic.js",
+  "js/panels/rhythm.js",
   "js/panels/scalemaps.js",
   "js/panels/trainer-stats.js",
   "js/panels/tuner.js",

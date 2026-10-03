@@ -1,0 +1,88 @@
+/* Rhythm panel (js/panels/rhythm.js): drum grid, pads, level picker. Builds on the trainer styles in panels.css. */
+
+.trainer.rhythm {
+  max-width: 1040px;
+  --kick: #2563eb; --snare: #dc2626; --hat: #ca8a04; --tom: #16a34a; --cymbal: #9333ea;
+}
+/* Drums: the tabs show their own pads instead of the footer instrument, and there is no audio input. */
+body[data-instrument="drums"] #keyboard, body[data-instrument="drums"] #audio-io { display: none !important; }
+
+.g-kick { --c: var(--kick); } .g-snare { --c: var(--snare); } .g-hat { --c: var(--hat); }
+.g-tom { --c: var(--tom); } .g-cymbal { --c: var(--cymbal); }
+
+/* Levels and controls */
+.rh-levels { display: flex; gap: 6px; align-items: center; justify-content: center; }
+.rh-levels .tr-btn { min-height: 36px; padding: 4px 14px; font-size: 18px; }
+.rh-level-select { font-size: 16px; font-weight: 600; padding: 6px 10px; max-width: min(440px, 70vw); }
+.rh-level-info { text-align: center; margin-top: -6px; }
+.rh-controls { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: center; }
+.rh-tempo { display: inline-flex; align-items: center; gap: 6px; margin-left: 6px; }
+.rh-tempo .rh-small { min-height: 36px; padding: 4px 12px; }
+.rh-bpm { width: 64px; text-align: center; font-size: 15px; }
+.rh-metro { margin-left: 6px; }
+
+/* Drum grid */
+.rh-grid { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 10px 8px 4px; overflow-x: auto; }
+.rh-svg { display: block; user-select: none; }
+.rh-lane { fill: #fbfbf9; }
+.rh-lane.odd { fill: #f3f3ef; }
+.rh-lane-label { font-size: 12px; fill: #374151; }
+.rh-dot { fill: var(--c); }
+.rh-beat { stroke: #b8b8b0; stroke-width: 1.2; }
+.rh-sub { stroke: #dedfd8; stroke-width: 1; }
+.rh-barline { stroke: #4b5563; stroke-width: 2; }
+.rh-count { font-size: 11px; fill: var(--muted); text-anchor: middle; }
+.rh-count.beat { font-weight: 700; fill: #374151; }
+.rh-meter { font-size: 11.5px; font-weight: 700; fill: #374151; }
+.rh-note circle { fill: var(--c); stroke: #fff; stroke-width: 1.5; transition: fill .1s; }
+.rh-note.ghost circle { fill: #fff; stroke: var(--c); stroke-width: 2; }
+.rh-note.demo { opacity: .45; }
+.rh-note.hidden { opacity: 0; }
+.rh-note.hidden.shown { opacity: 1; }
+.rh-note.good circle { fill: var(--good); stroke: #14532d; }
+.rh-note.loose circle { fill: var(--warn); stroke: #78350f; }
+.rh-note.miss circle { fill: #fff; stroke: var(--bad); stroke-width: 2.5; }
+.rh-note.dyn-bad circle { stroke: var(--bad); stroke-width: 3; stroke-dasharray: 3 2; }
+.rh-accent { font-size: 13px; font-weight: 700; fill: #111827; }
+.rh-hitmark { stroke-width: 2.5; stroke-linecap: round; }
+.rh-hitmark.good { stroke: #15803d; } .rh-hitmark.loose { stroke: #b45309; }
+.rh-wrong { font-size: 17px; font-weight: 700; fill: var(--bad); text-anchor: middle; }
+.rh-playhead { stroke: var(--accent); stroke-width: 2.5; }
+.rh-step { fill: color-mix(in srgb, var(--accent) 14%, transparent); stroke: var(--accent); stroke-width: 1.5; }
+
+/* Pad finder prompt */
+.rh-prompt { min-height: 130px; justify-content: center; }
+
+/* Pads */
+.rh-pad-area { display: flex; gap: 18px; align-items: flex-start; justify-content: center; flex-wrap: wrap; }
+.rh-pads {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; width: min(360px, 100%);
+  padding: 10px; border-radius: 14px; background: #2b2b2b; touch-action: none;
+}
+.rh-pad {
+  aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
+  border-radius: 8px; border: 2px solid #3f3f3f; background: #3a3a3a; color: #d4d4d4; padding: 4px;
+  user-select: none; touch-action: none; transition: background .08s, border-color .08s;
+}
+.rh-pad b { font-size: 13px; font-weight: 600; }
+.rh-pad small { font-size: 10px; opacity: .65; font-variant-numeric: tabular-nums; }
+.rh-pad:hover { border-color: #6b6b6b; }
+.rh-pad.used { border-color: var(--c); color: #fff; }
+.rh-pad.cue { background: color-mix(in srgb, var(--c) 55%, #3a3a3a); border-color: #fff; box-shadow: 0 0 12px var(--c); }
+.rh-pad.demo { background: color-mix(in srgb, var(--c) 40%, #3a3a3a); }
+.rh-pad.hit { background: var(--c); color: #fff; }
+.rh-pad.wrong { background: var(--bad); border-color: #fff; }
+.rh-pad.learn { border-color: #fbbf24; box-shadow: 0 0 0 3px #fbbf24; animation: rh-pulse 1s infinite; }
+@keyframes rh-pulse { 50% { box-shadow: 0 0 0 6px rgba(251, 191, 36, .35); } }
+.rh-pad-side { display: flex; flex-direction: column; gap: 8px; max-width: 320px; font-size: 12.5px; }
+.rh-map-buttons { display: flex; gap: 6px; flex-wrap: wrap; }
+.rh-map-buttons .tr-btn { min-height: 34px; padding: 4px 12px; font-size: 13px; }
+
+@media (max-width: 600px) {
+  .rh-tempo { margin-left: 0; }
+  .rh-pad b { font-size: 11.5px; }
+  .rh-pad-side { max-width: none; }
+}
+@media (max-height: 560px) {
+  .rh-pads { width: min(260px, 100%); gap: 5px; padding: 6px; }
+}

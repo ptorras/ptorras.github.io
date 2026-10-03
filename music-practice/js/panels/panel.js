@@ -26,17 +26,23 @@
 //   flash(midi, kind)                 brief feedback on the on-screen instrument ('wrong' | 'good')
 //   recordResult({ title, correct, total })   adds an entry to the practice history
 //   makeRng(seed?)                    seeded RNG (js/core/rng.js)
-//   guitarInput    GuitarInput (js/io/guitarinput.js) when the guitar audio input exists, else null. Panels may
+//   getBpm(), setBpm(bpm)             the shared practice tempo (also moved by the tempo fader, see onTempo)
+//   latencyMs()                       the latency compensation setting (ms)
+//   qwerty()                          whether the computer keyboard is being used as a piano
+//   guitarInput    GuitarInput (js/io/guitarinput.js) when the audio input exists, else null. Panels may
 //                  subscribe to its events (e.g. 'pitch' for a tuner) and must unsubscribe in destroy().
 //
 // instance (all methods optional except destroy):
 //   onOptions(values)                 options changed in the sidebar
-//   noteOn(midi, time, velocity, source)   played note (MIDI keyboard, QWERTY, on-screen, or guitar pitch
-//                                     detection: source 'guitar'); time = performance.now() ms
+//   noteOn(midi, time, velocity, source, channel)   played note (MIDI keyboard, QWERTY, on-screen, or audio
+//                                     pitch detection: source 'audio'); time = performance.now() ms;
+//                                     channel = MIDI channel 0–15 for source 'midi'
 //   noteOff(midi, time)
 //   heldNotes is not tracked for you: keep your own Set if you need chords (see heldTracker below).
 //   transport(action)                 MIDI controller / keyboard transport: 'play' | 'stop' | 'forward' | 'back'
-//                                     return true if handled
+//                                     | 'listen' | 'metronome'; return true if handled
+//   onTempo(bpm)                      the shared tempo changed (sidebar, fader or setBpm)
+//   playsSound                        property: true if the panel sounds played notes itself (no piano monitor)
 //   next()                            "New exercise" button / N key
 //   destroy()                         remove listeners, stop audio
 
