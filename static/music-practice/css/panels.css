@@ -1,0 +1,100 @@
+/* Trainer panels: chord trainer (js/panels/chordtrainer.js) and ear training (js/panels/eartraining.js). */
+
+.trainer {
+  max-width: 860px; margin: 0 auto; padding: 18px 20px 32px;
+  display: flex; flex-direction: column; gap: 14px; position: relative;
+}
+
+/* Session stats */
+.tr-stats { display: flex; flex-wrap: wrap; gap: 8px; }
+.tr-chip {
+  display: flex; flex-direction: column; min-width: 92px; padding: 6px 12px;
+  background: var(--panel); border: 1px solid var(--line); border-radius: 10px;
+}
+.tr-chip span { font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); }
+.tr-chip b { font-size: 18px; font-variant-numeric: tabular-nums; }
+.tr-chip.good b { color: var(--good); }
+.tr-chip.warn b { color: var(--warn); }
+.tr-chip.bad b { color: var(--bad); }
+
+/* Question card */
+.tr-card {
+  background: var(--panel); border: 1px solid var(--line); border-radius: 14px;
+  padding: 18px 20px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 6px;
+}
+.tr-prompt-label { font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
+.tr-chord-name { font-size: 56px; font-weight: 700; line-height: 1.15; font-family: Georgia, "Times New Roman", serif; }
+.tr-chord-name.words { font-size: 30px; font-family: inherit; font-weight: 600; }
+.tr-prompt { font-size: 22px; font-weight: 600; }
+.tr-sub { color: var(--muted); font-size: 13px; min-height: 1em; }
+.tr-staff { width: 100%; max-width: 300px; min-height: 120px; }
+.tr-staff-inner { width: 100%; }
+
+/* Buttons */
+.tr-actions { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+.tr-btn { min-height: 40px; padding: 8px 16px; font-size: 15px; border-radius: 8px; }
+.tr-btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+.tr-answers { display: flex; flex-direction: column; gap: 12px; }
+.tr-answer-row { display: flex; flex-direction: column; gap: 6px; }
+.tr-row-title { font-size: 12px; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); }
+.tr-keys { margin-left: 8px; text-transform: none; letter-spacing: 0; opacity: .75; }
+.tr-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(118px, 1fr)); gap: 8px; }
+.tr-grid:has(.tr-root) { grid-template-columns: repeat(auto-fill, minmax(56px, 1fr)); }
+
+.tr-ans {
+  position: relative; min-height: 52px; padding: 8px 10px; font-size: 16px; font-weight: 600;
+  border-radius: 10px; border: 1.5px solid var(--line); background: var(--panel);
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
+  touch-action: manipulation; transition: background .12s, border-color .12s;
+}
+.tr-ans small { font-size: 11.5px; font-weight: 400; color: var(--muted); }
+.tr-ans:hover { border-color: #b9b9b2; background: #fafaf8; }
+.tr-ans .tr-key {
+  position: absolute; top: 4px; left: 6px; font-size: 10px; font-weight: 600; color: var(--muted);
+}
+.tr-ans.tr-root { font-size: 18px; min-height: 48px; }
+.tr-ans.selected { border-color: var(--accent); background: #eff6ff; }
+.tr-ans.right { border-color: var(--good); background: color-mix(in srgb, var(--good) 14%, #fff); color: #14532d; }
+.tr-ans.wrong { border-color: var(--bad); background: color-mix(in srgb, var(--bad) 12%, #fff); color: #7f1d1d; }
+
+/* Feedback */
+.tr-feedback {
+  min-height: 46px; padding: 10px 14px; border-radius: 10px; font-size: 16px; text-align: center;
+  border: 1px solid transparent;
+}
+.tr-feedback:empty { visibility: hidden; }
+.tr-feedback.good { color: #14532d; background: color-mix(in srgb, var(--good) 12%, #fff); border-color: var(--good); }
+.tr-feedback.bad { color: #7f1d1d; background: color-mix(in srgb, var(--bad) 10%, #fff); border-color: var(--bad); }
+.tr-feedback.warn { color: #78350f; background: color-mix(in srgb, var(--warn) 12%, #fff); border-color: var(--warn); }
+.tr-held { text-align: center; color: var(--muted); min-height: 1.2em; font-variant-numeric: tabular-nums; }
+.tr-weak { text-align: center; color: var(--muted); font-size: 12.5px; }
+
+/* Answer slots (progressions, dictation) */
+.tr-slots { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-top: 6px; }
+.tr-slot {
+  min-width: 56px; min-height: 44px; padding: 6px 10px; border-radius: 8px; font-size: 18px; font-weight: 600;
+  border: 1.5px dashed #c7c7c0; background: #fafaf8; display: inline-flex; align-items: center; justify-content: center;
+}
+.tr-slot.tonic { border-style: solid; color: var(--muted); }
+.tr-slot.current { border-color: var(--accent); border-style: solid; }
+.tr-slot.right { border: 1.5px solid var(--good); background: color-mix(in srgb, var(--good) 14%, #fff); }
+.tr-slot.wrong { border: 1.5px solid var(--bad); background: color-mix(in srgb, var(--bad) 12%, #fff); }
+
+/* End-of-round summary */
+.tr-summary {
+  position: sticky; bottom: 16px; align-self: center; min-width: 300px;
+  background: var(--panel); border: 1px solid var(--line); border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, .12); padding: 18px 24px; z-index: 10;
+}
+.tr-summary h3 { margin: 0 0 10px; }
+.tr-summary table { border-collapse: collapse; width: 100%; }
+.tr-summary td { padding: 3px 0; }
+.tr-summary td:last-child { text-align: right; font-weight: 600; font-variant-numeric: tabular-nums; }
+.tr-summary .buttons { display: flex; justify-content: flex-end; margin-top: 14px; }
+
+@media (max-width: 600px) {
+  .trainer { padding: 12px 10px 24px; }
+  .tr-chord-name { font-size: 42px; }
+  .tr-grid { grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); }
+}

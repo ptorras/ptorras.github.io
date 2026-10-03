@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Music Practice</title>
+  <meta name="theme-color" content="#1e3a8a">
+  <meta name="description" content="Score reading, sight reading, technique, chords and ear training for piano and guitar.">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <link rel="stylesheet" href="css/app.css">
+  <link rel="stylesheet" href="css/guitar.css">
+  <link rel="stylesheet" href="css/panels.css">
+  <link rel="stylesheet" href="css/tuner.css">
+  <script src="vendor/opensheetmusicdisplay.min.js"></script>
+  <script type="module" src="js/main.js"></script>
+</head>
+<body data-instrument="piano">
+  <div id="update-bar" class="update-bar" role="status" hidden>
+    A new version of Music Practice is available. <button id="btn-update" class="primary">Reload</button>
+    <button id="btn-update-later" title="Use the new version next time the app starts">Later</button>
+  </div>
+  <header class="topbar">
+    <h1>Music Practice</h1>
+    <nav class="segmented" id="instrument" aria-label="Instrument">
+      <button data-instrument="piano">Piano</button>
+      <button data-instrument="guitar">Guitar</button>
+    </nav>
+    <div class="io">
+      <span id="midi-status" class="pill">MIDI…</span>
+      <label>MIDI in <select id="midi-input"></select></label>
+      <label title="Reserved for sending messages to your keyboard">Out <select id="midi-output"></select></label>
+      <span class="guitar-only io-group" id="guitar-io">
+        <button id="gi-toggle" class="pill-button" title="Listen to your guitar through the audio interface">Guitar input: off</button>
+        <select id="gi-device" title="Audio input device"></select>
+        <select id="gi-channel" title="Input channel of the audio interface">
+          <option value="mix">Both channels</option>
+          <option value="0">Input 1 (left)</option>
+          <option value="1">Input 2 (right)</option>
+        </select>
+        <span class="level" title="Input level"><span id="gi-level"></span></span>
+        <label>Tuning <select id="opt-tuning"></select></label>
+      </span>
+      <label class="check" title="Play your notes through the computer speakers"><input type="checkbox" id="opt-monitor"> Sound</label>
+      <button id="btn-install" class="pill-button" title="Install Music Practice as an app (works offline)" hidden>Install app</button>
+      <label class="check" title="Use the computer keyboard as a piano: A W S E D F T G Y H U J K… (Z/X change octave)"><input type="checkbox" id="opt-qwerty"> QWERTY</label>
+    </div>
+  </header>
+
+  <div class="layout">
+    <aside class="sidebar">
+      <nav class="tabs" id="tabs"></nav>
+      <p class="desc" id="exercise-desc"></p>
+      <div id="exercise-form" class="form"></div>
+      <div id="file-panel" class="form" hidden>
+        <label class="file-drop" id="file-drop">
+          <input type="file" id="file-input" accept=".xml,.musicxml,.mxl">
+          <span>Open a MusicXML file (.musicxml, .xml, .mxl)<br><small>or drop it here</small></span>
+        </label>
+        <p id="file-name" class="muted"></p>
+      </div>
+      <div class="actions">
+        <button id="btn-generate" class="primary">New exercise</button>
+        <span id="seed" class="muted" title="Random seed of this exercise"></span>
+      </div>
+
+      <section id="practice-section">
+        <h2>Practice</h2>
+        <div class="form">
+          <label class="field"><span>Mode</span>
+            <select id="opt-mode">
+              <option value="wait">Wait for me (free tempo)</option>
+              <option value="tempo">Fixed tempo</option>
+            </select>
+          </label>
+          <label class="field"><span>Tempo ♩ =</span>
+            <span class="bpm"><input type="range" id="opt-bpm-range" min="30" max="240" value="80"><input type="number" id="opt-bpm" min="20" max="300" value="80"></span>
+          </label>
+          <label class="field check"><input type="checkbox" id="opt-metronome"> Metronome</label>
+          <label class="field check tempo-only"><input type="checkbox" id="opt-countin" checked> Count-in bar</label>
+          <label class="field tempo-only"><span>Timing window</span>
+            <select id="opt-tolerance">
+              <option value="250">Relaxed (±250 ms)</option>
+              <option value="150" selected>Normal (±150 ms)</option>
+              <option value="80">Strict (±80 ms)</option>
+            </select>
+          </label>
+          <div class="field" id="staves-field"><span>Play staves</span><div id="staves"></div></div>
+          <label class="field check tempo-only"><input type="checkbox" id="opt-others"> Play the other staves for me</label>
+          <label class="field check"><input type="checkbox" id="opt-hints"> Show next notes on the instrument</label>
+          <label class="field check"><input type="checkbox" id="opt-autonext" checked> New exercise when finished</label>
+          <label class="field"><span>Zoom</span><input type="range" id="opt-zoom" min="0.5" max="1.6" step="0.05" value="1"></label>
+          <label class="field tempo-only" title="Shift note timing if your setup has latency"><span>Latency comp. (ms)</span><input type="number" id="opt-latency" value="0" step="5"></label>
+        </div>
+      </section>
+
+      <details id="controller-section">
+        <summary>MIDI controller</summary>
+        <p class="muted">Press <b>Learn</b>, then move a fader or press a button on your keyboard.
+          Transport buttons that send MMC or MIDI Start/Stop work out of the box.</p>
+        <div id="controller-list" class="controller-list"></div>
+        <div class="actions"><button id="ctl-reset">Reset to defaults</button></div>
+      </details>
+
+      <h2>History</h2>
+      <ol id="history" class="history"></ol>
+    </aside>
+
+    <main class="main">
+      <div class="transport">
+        <span class="score-only">
+          <button id="btn-back" title="Previous note (←)">⏮</button>
+          <button id="btn-start" class="primary">▶ Start</button>
+          <button id="btn-stop" title="Stop; press again to go back to the start">■ Stop</button>
+          <button id="btn-forward" title="Next note (→)">⏭</button>
+          <button id="btn-listen">♪ Listen</button>
+        </span>
+        <span id="status" class="status">Choose an exercise and press Start (or just play).</span>
+        <span id="toast" class="toast" hidden></span>
+        <span class="stats" id="stats"></span>
+      </div>
+      <div class="score-wrap" id="score-wrap">
+        <div id="score"></div>
+        <div id="result" class="result" hidden></div>
+      </div>
+      <div class="panel-wrap" id="panel" hidden></div>
+    </main>
+  </div>
+  <footer id="keyboard" class="keyboard"></footer>
+</body>
+</html>

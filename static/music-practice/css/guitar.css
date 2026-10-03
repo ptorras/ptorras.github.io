@@ -1,0 +1,105 @@
+/* Guitar visuals: chord diagrams, fretboards, the footer fretboard and the guitar cheat-sheet panels. */
+
+:root {
+  --g-root: #e8590c;
+  --g-tone: #374151;
+  --g-hint: #2563eb;
+  --g-wood: #4a3426;
+}
+
+/* ------------------------------------------------------------ chord diagrams */
+.chord-diagram { color: var(--ink); display: block; overflow: visible; }
+.chord-diagram .cd-title { fill: var(--ink); }
+.chord-diagram .cd-pos { fill: var(--muted); }
+.chord-diagram .cd-dot, .chord-diagram .cd-barre { fill: var(--g-tone); }
+.chord-diagram .cd-dot.root { fill: var(--g-root); }
+.chord-diagram .cd-open.root { stroke: var(--g-root); stroke-width: 1.8; }
+.chord-diagram .cd-mute { stroke: var(--muted); }
+.chord-diagram .cd-label { fill: #fff; }
+
+/* ------------------------------------------------------------ fretboards (light, in panels) */
+.fretboard { display: block; width: 100%; height: auto; color: var(--ink); overflow: visible; }
+.fretboard .fb-board { fill: #c8a27a; opacity: .18; }
+.fretboard .fb-mark circle { fill: var(--g-tone); stroke: none; transition: fill .08s, opacity .08s; }
+.fretboard .fb-mark text { fill: #fff; pointer-events: none; }
+.fretboard .fb-mark.root circle { fill: var(--g-root); }
+.fretboard .fb-mark.tone circle { fill: var(--g-tone); }
+.fretboard .fb-mark.hint circle { fill: var(--g-hint); }
+.fretboard .fb-mark.pressed circle { fill: #1d4ed8; }
+.fretboard .fb-mark.good circle { fill: var(--good); }
+.fretboard .fb-mark.wrong circle { fill: var(--bad); }
+.fretboard .fb-mark.dim circle { fill: #fff; stroke: #c4c4bc; stroke-width: 1.2; }
+.fretboard .fb-mark.dim text { fill: var(--muted); }
+.fretboard .fb-mark.playing circle { fill: var(--g-hint); stroke: #93c5fd; stroke-width: 3; }
+
+/* ------------------------------------------------------------ footer fretboard (dark, replaces the piano) */
+.gfb { position: relative; height: 100%; width: 100%; user-select: none; touch-action: none; color: #e9e3d8; }
+.gfb { overflow: hidden; }
+.gfb .fretboard { width: 100%; height: 100%; overflow: hidden; }
+.gfb .fb-board { fill: var(--g-wood); opacity: 1; }
+.gfb .fb-nut { fill: #f3eee4; opacity: 1; }
+.gfb .fb-fret { stroke: #b9b2a6; opacity: .75; }
+.gfb .fb-string { stroke: #ddd6c9; opacity: .85; }
+.gfb .fb-inlay { fill: #efe7d6; opacity: .35; }
+.gfb .fb-num { fill: #a8a29a; opacity: 1; font-size: 11px; }
+.gfb .fb-num.strong { fill: #e9e3d8; }
+.gfb .fb-hit { cursor: pointer; }
+.gfb .fb-hit:hover { fill: rgba(255, 255, 255, .07); }
+.gfb .fb-mark { opacity: 0; pointer-events: none; }
+.gfb .fb-mark circle { stroke: none; }
+.gfb .fb-mark.alt { opacity: 1; }
+.gfb .fb-mark.alt circle { fill: none; stroke: #93c5fd; stroke-width: 1.6; stroke-dasharray: 3 2; }
+.gfb .fb-mark.alt text { fill: #93c5fd; }
+.gfb .fb-mark.hint { opacity: 1; }
+.gfb .fb-mark.hint circle { fill: #3b6fd4; }
+.gfb .fb-mark.pressed { opacity: 1; }
+.gfb .fb-mark.pressed circle { fill: #60a5fa; stroke: #fff; stroke-width: 1.5; }
+.gfb .fb-mark.pressed text { fill: #0b1b33; }
+.gfb .fb-mark.good { opacity: 1; }
+.gfb .fb-mark.good circle { fill: var(--good); stroke: #fff; stroke-width: 1.5; }
+.gfb .fb-mark.good text { fill: #fff; }
+.gfb .fb-mark.wrong { opacity: 1; }
+.gfb .fb-mark.wrong circle { fill: var(--bad); stroke: #fff; stroke-width: 1.5; }
+.gfb .fb-mark.wrong text { fill: #fff; }
+
+/* ------------------------------------------------------------ guitar panels */
+.gpanel { padding: 14px 18px 32px; }
+.gpanel h3 { font-size: 14px; margin: 18px 0 8px; display: flex; align-items: baseline; gap: 10px; }
+.gpanel h3:first-child { margin-top: 4px; }
+.gpanel h3 .muted { font-weight: 400; }
+.gpanel .empty { color: var(--muted); padding: 20px 0; }
+
+.chord-secs { display: flex; flex-wrap: wrap; gap: 0 28px; align-items: flex-start; }
+.chord-sec { max-width: 100%; }
+.gpanel .chord-sec h3 { margin: 10px 0 8px; }
+.chord-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+.chord-card {
+  width: 128px; display: flex; flex-direction: column; align-items: center; gap: 1px;
+  padding: 6px 4px 5px; border: 1px solid var(--line); border-radius: 8px; background: var(--panel);
+  cursor: pointer; transition: border-color .1s, box-shadow .1s;
+}
+.chord-card:hover { border-color: #c7c7c0; }
+.chord-card.active { border-color: var(--accent); box-shadow: 0 0 0 2px #bfdbfe; }
+.chord-card .chord-diagram { width: 118px; height: auto; }
+.chord-card .tag { font-size: 10.5px; color: var(--muted); }
+
+.scale-full {
+  border: 1px solid var(--line); border-radius: 8px; background: var(--panel); padding: 8px 10px 4px; overflow-x: auto;
+}
+.scale-full .fretboard { min-width: 640px; }
+.position-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 10px; }
+.position-card {
+  border: 1px solid var(--line); border-radius: 8px; background: var(--panel); padding: 6px 10px 2px; cursor: pointer;
+  transition: border-color .1s, box-shadow .1s;
+}
+.position-card:hover { border-color: #c7c7c0; }
+.position-card.active { border-color: var(--accent); box-shadow: 0 0 0 2px #bfdbfe; }
+.position-card .cap { font-size: 12.5px; font-weight: 600; margin-bottom: 2px; display: flex; justify-content: space-between; }
+.position-card .cap .muted { font-weight: 400; }
+.legend { display: flex; gap: 14px; flex-wrap: wrap; font-size: 12px; color: var(--muted); margin: 6px 0 0; }
+.legend i { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 5px; vertical-align: -1px; }
+.legend .root { background: var(--g-root); }
+.legend .tone { background: var(--g-tone); }
+
+/* The footer is a little taller in guitar mode so six strings stay tappable. */
+.keyboard:has(> .gfb), .keyboard.guitar { --kb-h: 128px; height: var(--kb-h); background: #211c19; padding: 4px 8px 2px; }
