@@ -22,12 +22,14 @@
     <button id="btn-update-later" title="Use the new version next time the app starts">Later</button>
   </div>
   <header class="topbar">
+    <button id="btn-menu" class="compact-only menu-button" aria-controls="sidebar" aria-expanded="false" title="Exercises and practice options">☰ <span id="menu-label">Exercises</span></button>
     <h1>Music Practice</h1>
     <nav class="segmented" id="instrument" aria-label="Instrument">
       <button data-instrument="piano">Piano</button>
       <button data-instrument="guitar">Guitar</button>
     </nav>
-    <div class="io">
+    <button id="btn-io" class="compact-only" aria-controls="io" aria-expanded="false" title="Inputs and settings">⚙</button>
+    <div class="io" id="io">
       <span id="midi-status" class="pill">MIDI…</span>
       <label>MIDI in <select id="midi-input"></select></label>
       <label title="Reserved for sending messages to your keyboard">Out <select id="midi-output"></select></label>
@@ -49,7 +51,9 @@
   </header>
 
   <div class="layout">
-    <aside class="sidebar">
+    <div id="drawer-backdrop" class="drawer-backdrop"></div>
+    <aside class="sidebar" id="sidebar">
+      <div class="drawer-head"><b>Exercises</b><button id="btn-menu-close" aria-label="Close">✕</button></div>
       <nav class="tabs" id="tabs"></nav>
       <p class="desc" id="exercise-desc"></p>
       <div id="exercise-form" class="form"></div>

@@ -101,5 +101,13 @@
 .legend .root { background: var(--g-root); }
 .legend .tone { background: var(--g-tone); }
 
+/* Phones: three chord diagrams per row. */
+@media (max-width: 480px) {
+  .gpanel { padding: 10px 4px 24px; }
+  .chord-card { width: 106px; }
+  .chord-card .chord-diagram { width: 98px; }
+  .position-grid { grid-template-columns: 1fr; }
+}
+
 /* The footer is a little taller in guitar mode so six strings stay tappable. */
 .keyboard:has(> .gfb), .keyboard.guitar { --kb-h: 128px; height: var(--kb-h); background: #211c19; padding: 4px 8px 2px; }

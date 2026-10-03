@@ -42,7 +42,8 @@ export class ScoreView {
     this.colors.clear();
     this.osmd.setOptions({ newSystemFromXML: generated });
     await this.osmd.load(content);
-    this.osmd.Zoom = zoom;
+    this.zoom = zoom;
+    this.osmd.Zoom = this.#effectiveZoom();
     this.osmd.render();
     this.lastWidth = this.container.clientWidth;
     this.timeline = this.#buildTimeline();
@@ -57,8 +58,8 @@ export class ScoreView {
   }
 
   setZoom(z) {
+    this.zoom = z;
     if (!this.loaded) return;
-    this.osmd.Zoom = z;
     this.rerender(true);
   }
 
@@ -66,6 +67,7 @@ export class ScoreView {
     if (!this.loaded || this.container.clientWidth === 0) return; // hidden (a panel tab is showing)
     if (!force && Math.abs(this.container.clientWidth - this.lastWidth) < 8) return;
     this.lastWidth = this.container.clientWidth;
+    this.osmd.Zoom = this.#effectiveZoom();
     this.osmd.render();
     for (const [id, c] of this.colors) this.#paint(id, c);
     const p = this.pos;
@@ -73,6 +75,17 @@ export class ScoreView {
     this.pos = 0;
     this.osmd.cursor.show();
     this.cursorTo(p);
+  }
+
+  /**
+   * The chosen zoom, scaled down on small screens: narrow ones (phones) so a line still holds a few bars, short
+   * ones (phones held sideways) so a couple of staves fit between the controls and the keyboard.
+   */
+  #effectiveZoom() {
+    const w = this.container.clientWidth;
+    const h = this.container.parentElement?.clientHeight || 0;
+    const fit = w ? Math.min(1, Math.max(0.55, Math.min(w / 900, h ? h / 450 : 1))) : 1;
+    return (this.zoom ?? 1) * fit;
   }
 
   #buildTimeline() {

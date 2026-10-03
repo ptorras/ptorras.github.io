@@ -16,7 +16,8 @@
 
 * { box-sizing: border-box; }
 html, body { margin: 0; height: 100%; background: var(--bg); }
-body { display: flex; flex-direction: column; }
+/* dvh: the visible height on phones, without the browser's address bar */
+body { display: flex; flex-direction: column; height: 100dvh; }
 [hidden] { display: none !important; }
 
 button, select, input { font: inherit; }
@@ -138,9 +139,54 @@ body[data-kind="panel"] .score-only { display: none; }
 .key.pressed.white { background: #93c5fd; } .key.pressed.black { background: #2563eb; }
 .key.wrong.white, .key.wrong.black { background: var(--bad); }
 
-@media (max-width: 800px) {
-  .layout { flex-direction: column; }
-  .sidebar { width: auto; max-height: 45vh; border-right: 0; border-bottom: 1px solid var(--line); }
+/* ------------------------------------------------------------ compact layout (phones, small windows)
+   Keep this query in sync with COMPACT_QUERY in js/main.js. The sidebar becomes a drawer opened with the
+   menu button, the inputs and settings fold away behind the gear button, and the piano scrolls sideways. */
+.compact-only, .drawer-head, .drawer-backdrop { display: none; }
+@media (max-width: 800px), (max-height: 560px) {
+  .topbar { gap: 8px; padding: 6px 10px; }
+  .topbar h1 { display: none; }
+  .compact-only { display: inline-flex; align-items: center; gap: 6px; }
+  .menu-button { max-width: 48vw; min-width: 0; }
+  .menu-button span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  #btn-io { margin-left: auto; font-size: 17px; padding: 3px 10px; }
+  #btn-io[aria-expanded="true"] { background: var(--ink); color: #fff; border-color: var(--ink); }
+  .topbar .io { display: none; width: 100%; margin-left: 0; gap: 8px 12px; padding: 2px 0 4px; }
+  body.io-open .topbar .io { display: flex; }
+
+  .sidebar {
+    position: fixed; z-index: 40; top: 0; bottom: 0; left: 0; width: min(340px, 88vw);
+    padding-top: calc(10px + env(safe-area-inset-top, 0px)); padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px));
+    transform: translateX(-102%); transition: transform .2s ease, visibility .2s; visibility: hidden;
+    box-shadow: 4px 0 24px rgba(0, 0, 0, .18);
+  }
+  body.menu-open .sidebar { transform: none; visibility: visible; }
+  body.menu-open .drawer-backdrop { display: block; position: fixed; inset: 0; z-index: 39; background: rgba(0, 0, 0, .35); }
+  .drawer-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+  .drawer-head b { font-size: 15px; }
+  .drawer-head button { padding: 2px 10px; }
+
+  .transport { padding: 6px 10px; gap: 6px; }
+  .status { margin-left: 0; }
+  .panel-wrap { padding: 12px 12px 24px; }
+  /* Panels without a status message: no empty transport strip. */
+  body[data-kind="panel"] .transport:has(.status:empty):has(.toast[hidden]):has(.stats:empty) { display: none; }
+
+  /* Piano: keys at a tappable width; swipe sideways to reach other octaves. */
+  .keyboard:has(> .piano) { overflow-x: auto; overflow-y: hidden; overscroll-behavior-x: contain; scrollbar-width: thin; }
+  .piano { min-width: calc(52 * 24px); touch-action: pan-x; }
+}
+/* Phones held sideways: little height, so a shorter keyboard / fretboard leaves room for the score. */
+@media (max-height: 560px) {
+  :root { --kb-h: 84px; }
+  body .keyboard:has(> .gfb), body .keyboard.guitar { --kb-h: 104px; }
+  .result, .tr-summary { padding: 12px 18px; bottom: 8px; }
+}
+/* Touch screens: slightly larger controls. */
+@media (pointer: coarse) {
+  button, select, input[type="number"] { min-height: 34px; }
+  .pill-button, .controller-row button { min-height: 30px; }
+  input[type="checkbox"] { width: 18px; height: 18px; }
 }
 
 /* Installable app: update banner */

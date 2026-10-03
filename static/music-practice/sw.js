@@ -8,7 +8,7 @@
 // On localhost the network is tried first, so edits show up on reload during development.
 
 // <generated>
-const VERSION = '0121f77287e7';
+const VERSION = '234b04306361';
 const FILES = [
   "./",
   "css/app.css",

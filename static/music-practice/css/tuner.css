@@ -88,6 +88,13 @@
 .tn-level-bar.hot { background: var(--tn-bad); }
 .tn-level-db { width: 52px; text-align: right; font-size: 12px; color: var(--tn-muted); font-variant-numeric: tabular-nums; }
 
+@media (max-height: 560px) {
+  .tuner { padding: 10px 12px 20px; gap: 10px; }
+  .tn-name { font-size: 64px; }
+  .tn-display { padding: 10px 16px; gap: 6px; }
+  .tn-msg { padding: 12px 16px; }
+}
+
 @media (max-width: 520px) {
   .tn-name { font-size: 72px; }
   .tn-display { padding: 14px 16px; }
