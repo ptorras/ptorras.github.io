@@ -157,6 +157,7 @@ function renderTabs() {
     b.className = t.id === settings.tab ? 'active' : '';
     b.onclick = () => selectTab(t.id);
     nav.appendChild(b);
+    if (t.id === settings.tab) $('#menu-label').textContent = t.label;
   }
 }
 
@@ -766,6 +767,31 @@ function openFile(file) {
 
 // ------------------------------------------------------------ installable app
 
+// Phones and small windows (same query as the compact layout in css/app.css): the sidebar is a drawer and the
+// inputs/settings row folds away behind the gear button.
+const COMPACT_QUERY = '(max-width: 800px), (max-height: 560px)';
+
+function bindCompactLayout() {
+  const compact = window.matchMedia(COMPACT_QUERY);
+  const sidebar = $('#sidebar');
+  const menu = $('#btn-menu');
+  const setMenu = (open) => {
+    document.body.classList.toggle('menu-open', open && compact.matches);
+    menu.setAttribute('aria-expanded', String(open && compact.matches));
+    sidebar.inert = compact.matches && !open; // keep keyboard focus out of the closed drawer
+  };
+  menu.onclick = () => setMenu(!document.body.classList.contains('menu-open'));
+  $('#btn-menu-close').onclick = () => setMenu(false);
+  $('#drawer-backdrop').onclick = () => setMenu(false);
+  $('#btn-generate').addEventListener('click', () => setMenu(false));
+  window.addEventListener('keydown', (e) => { if (e.key === 'Escape') setMenu(false); });
+  compact.addEventListener('change', () => setMenu(false));
+  setMenu(false);
+
+  const io = $('#btn-io');
+  io.onclick = () => io.setAttribute('aria-expanded', String(document.body.classList.toggle('io-open')));
+}
+
 function bindPwa() {
   bindInstallButton($('#btn-install'));
   handleLaunchFiles(openFile);
@@ -787,6 +813,7 @@ window.addEventListener('keydown', unlockAudio, { once: true });
 const wakeLock = new ScreenWakeLock();
 
 bindPracticeControls();
+bindCompactLayout();
 bindMidi();
 bindFiles();
 renderController();

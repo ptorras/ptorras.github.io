@@ -93,6 +93,16 @@
 .tr-summary td:last-child { text-align: right; font-weight: 600; font-variant-numeric: tabular-nums; }
 .tr-summary .buttons { display: flex; justify-content: flex-end; margin-top: 14px; }
 
+/* Phones held sideways: tighter cards so the question and the answers fit above the keyboard. */
+@media (max-height: 560px) {
+  .trainer { padding: 10px 12px 20px; gap: 10px; }
+  .tr-chip { padding: 3px 10px; min-width: 80px; }
+  .tr-chip b { font-size: 15px; }
+  .tr-card { padding: 10px 14px; }
+  .tr-chord-name { font-size: 40px; }
+  .tr-ans { min-height: 42px; }
+}
+
 @media (max-width: 600px) {
   .trainer { padding: 12px 10px 24px; }
   .tr-chord-name { font-size: 42px; }

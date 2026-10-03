@@ -50,16 +50,36 @@ export class PianoKeyboard {
     this.release = release;
     window.addEventListener('pointerup', release);
     this.el.addEventListener('pointerleave', release);
+    this.el.addEventListener('pointercancel', release); // the touch turned into a sideways swipe (narrow screens)
+    requestAnimationFrame(() => this.reveal([60], { center: true }));
   }
 
   setPressed(midi, on) {
     this.keys.get(midi)?.classList.toggle('pressed', on);
+    if (on) this.reveal([midi], { margin: 0 });
+  }
+
+  /**
+   * On narrow screens the keyboard scrolls sideways (see the compact layout in app.css): scroll so these notes
+   * are visible, `margin` pixels away from the edges (or centred).
+   */
+  reveal(midis, { margin = 24, center = false } = {}) {
+    const c = this.container;
+    if (c.scrollWidth <= c.clientWidth) return;
+    const keys = midis.map((m) => this.keys.get(m)).filter(Boolean);
+    if (!keys.length) return;
+    const left = this.el.offsetLeft + Math.min(...keys.map((k) => k.offsetLeft));
+    const right = this.el.offsetLeft + Math.max(...keys.map((k) => k.offsetLeft + k.offsetWidth));
+    if (!center && left >= c.scrollLeft + margin && right <= c.scrollLeft + c.clientWidth - margin) return;
+    c.scrollTo({ left: (left + right - c.clientWidth) / 2, behavior: center ? 'auto' : 'smooth' });
   }
 
   /** items: MIDI numbers or { midi } objects. */
   setHints(items) {
     for (const k of this.el.querySelectorAll('.hint')) k.classList.remove('hint');
-    for (const it of items) this.keys.get(typeof it === 'number' ? it : it.midi)?.classList.add('hint');
+    const midis = items.map((it) => (typeof it === 'number' ? it : it.midi));
+    for (const m of midis) this.keys.get(m)?.classList.add('hint');
+    this.reveal(midis);
   }
 
   flash(midi, cls = 'wrong', ms = 350) {
