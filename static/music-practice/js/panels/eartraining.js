@@ -348,7 +348,7 @@ class EarTrainer {
   dictationNote(midi, source) {
     const q = this.q;
     const expected = q.melody[this.pos];
-    const tolerant = Boolean(this.values.octaveTolerant) || source === 'guitar';
+    const tolerant = Boolean(this.values.octaveTolerant) || source === 'audio';
     if (dictationNoteOk(expected, midi, tolerant)) {
       this.ctx.flash?.(midi, 'good');
       this.pos++;

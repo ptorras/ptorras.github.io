@@ -13,6 +13,7 @@
   <link rel="stylesheet" href="css/guitar.css">
   <link rel="stylesheet" href="css/panels.css">
   <link rel="stylesheet" href="css/tuner.css">
+  <link rel="stylesheet" href="css/rhythm.css">
   <script src="vendor/opensheetmusicdisplay.min.js"></script>
   <script type="module" src="js/main.js"></script>
 </head>
@@ -27,14 +28,15 @@
     <nav class="segmented" id="instrument" aria-label="Instrument">
       <button data-instrument="piano">Piano</button>
       <button data-instrument="guitar">Guitar</button>
+      <button data-instrument="drums">Drums</button>
     </nav>
     <button id="btn-io" class="compact-only" aria-controls="io" aria-expanded="false" title="Inputs and settings">⚙</button>
     <div class="io" id="io">
       <span id="midi-status" class="pill">MIDI…</span>
       <label>MIDI in <select id="midi-input"></select></label>
       <label title="Reserved for sending messages to your keyboard">Out <select id="midi-output"></select></label>
-      <span class="guitar-only io-group" id="guitar-io">
-        <button id="gi-toggle" class="pill-button" title="Listen to your guitar through the audio interface">Guitar input: off</button>
+      <span class="io-group" id="audio-io">
+        <button id="gi-toggle" class="pill-button" title="Listen to your instrument through an audio input">Audio input: off</button>
         <select id="gi-device" title="Audio input device"></select>
         <select id="gi-channel" title="Input channel of the audio interface">
           <option value="mix">Both channels</option>
@@ -42,7 +44,7 @@
           <option value="1">Input 2 (right)</option>
         </select>
         <span class="level" title="Input level"><span id="gi-level"></span></span>
-        <label>Tuning <select id="opt-tuning"></select></label>
+        <label class="guitar-only">Tuning <select id="opt-tuning"></select></label>
       </span>
       <label class="check" title="Play your notes through the computer speakers"><input type="checkbox" id="opt-monitor"> Sound</label>
       <button id="btn-install" class="pill-button" title="Install Music Practice as an app (works offline)" hidden>Install app</button>

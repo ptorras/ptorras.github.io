@@ -234,15 +234,15 @@ export class PracticeSession {
     this.#updateHints();
   }
 
-  /** A played note. `source` 'guitar' marks pitch-detected guitar notes (chords are checked via onset()). */
+  /** A played note. `source` 'audio' marks pitch-detected notes (guitar or piano; chords are checked via onset()). */
   noteOn(midi, perfTime, source) {
     if (!this.matcher || (this.state !== 'running' && this.state !== 'countin')) return;
-    if (source === 'guitar' && this.#expectedChord(perfTime)) return;
+    if (source === 'audio' && this.#expectedChord(perfTime)) return;
     this.#handle(this.matcher.noteOn(midi, this.#t(perfTime)));
   }
 
   /**
-   * Guitar onset (pick attack). Monophonic pitch tracking can't hear chords, so when a chord is expected we ask
+   * Audio input onset (pick or hammer attack). Monophonic pitch tracking can't hear chords, so when a chord is expected we ask
    * the audio input whether its notes are sounding and count the ones that are.
    * @param verify async (midis) => { present: [midi], ambiguous?: [midi] } (ambiguous notes are accepted)
    */

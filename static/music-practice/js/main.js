@@ -1,4 +1,4 @@
-// App bootstrap: wires instruments, exercises, panels, score view, MIDI, guitar input, audio and the practice
+// App bootstrap: wires instruments, exercises, panels, score view, MIDI, audio input, audio and the practice
 // session to the UI.
 //
 // Tabs come in three kinds:
@@ -37,7 +37,14 @@ const TAB_MODULES = [
   ['./panels/scalemaps.js', 'scaleMapsPanel', 'guitar'],
   ['./panels/tuner.js', 'tunerPanel', 'guitar'],
   ['./panels/eartraining.js', 'earTrainingPanel', 'both'],
+  ['./panels/rhythm.js', 'drumCoursePanel', 'drums'],
+  ['./panels/rhythm.js', 'padFinderPanel', 'drums'],
+  ['./panels/rhythm.js', 'drumRhythmsPanel', 'drums'],
+  ['./panels/rhythm.js', 'drumGroovesPanel', 'drums'],
+  ['./panels/rhythm.js', 'polyrhythmPanel', 'drums'],
+  ['./panels/rhythm.js', 'callResponsePanel', 'drums'],
 ];
+const INSTRUMENTS = ['piano', 'guitar', 'drums'];
 
 const DEFAULT_TUNING = { id: 'standard', label: 'Standard (E A D G B E)', strings: [40, 45, 50, 55, 59, 64] };
 
@@ -55,10 +62,12 @@ const settings = load(STORE_KEY, {
   options: {},
   practice: { mode: 'wait', bpm: 80, metronome: false, countIn: true, tolerance: '150', hints: false, autoNext: true, zoom: 1, latency: 0, others: false, monitor: false, qwerty: false },
   guitar: { tuning: 'standard', device: '', channel: 'mix', enabled: false },
+  pianoInput: { device: '', channel: 'mix', enabled: false }, // audio input in piano mode (mic or line in)
   controls: {},
 });
 settings.tabByInstrument ||= {};
 settings.guitar ||= { tuning: 'standard', device: '', channel: 'mix', enabled: false };
+settings.pianoInput ||= { device: '', channel: 'mix', enabled: false };
 settings.controls ||= {};
 const save = () => localStorage.setItem(STORE_KEY, JSON.stringify(settings));
 let history = [];
@@ -79,13 +88,16 @@ const session = new PracticeSession({
 
 let TABS = [FILE_TAB];
 let TUNINGS = { standard: DEFAULT_TUNING };
-let guitarInput = null;
+let guitarInput = null; // audio note input (GuitarInput), shared by both instruments with their own profile
 let activePanel = null; // { tab, instance }
 const current = { seed: null, title: '', file: null };
 
 const currentTab = () => TABS.find((t) => t.id === settings.tab);
-const tabsFor = (instrument) => TABS.filter((t) => t.instrument === instrument || t.instrument === 'both');
+// 'both' = piano and guitar; drums (pads) only have their own tabs.
+const tabsFor = (instrument) => TABS.filter((t) => t.instrument === instrument || (t.instrument === 'both' && instrument !== 'drums'));
 const currentTuning = () => TUNINGS[settings.guitar.tuning] || TUNINGS.standard || DEFAULT_TUNING;
+/** Audio input settings (device, channel, enabled) of the current instrument. */
+const inputSettings = () => (settings.instrument === 'guitar' ? settings.guitar : settings.pianoInput);
 
 async function loadModules() {
   const results = await Promise.allSettled(TAB_MODULES.map(async ([path, name, instrument]) => {
@@ -116,8 +128,9 @@ async function setInstrument(instrument) {
   document.body.dataset.instrument = instrument;
   document.querySelectorAll('#instrument button').forEach((b) => b.classList.toggle('active', b.dataset.instrument === instrument));
   audio.setTimbre(instrument === 'guitar' ? 'guitar' : 'piano');
-  // Panels such as the tuner need the input object (it is only started on request).
-  if (instrument === 'guitar') await ensureGuitarInput().catch((err) => console.warn('Guitar input unavailable', err.message));
+  // Panels such as the tuner need the input object (it is only started on request). Drums have no audio input.
+  if (instrument !== 'drums') await ensureGuitarInput().catch((err) => console.warn('Audio input unavailable', err.message));
+  await syncAudioInput();
   await mountInstrumentView();
   const tabs = tabsFor(instrument);
   const want = settings.tabByInstrument[instrument];
@@ -130,6 +143,11 @@ async function mountInstrumentView() {
   footer.innerHTML = '';
   const onNote = (m, on) => midi.inject(m, on, 90, 'mouse');
   instrumentView = null;
+  if (settings.instrument === 'drums') {
+    footer.className = 'keyboard'; // hidden: the drum tabs show their own pads
+    session.keyboard = null;
+    return;
+  }
   if (settings.instrument === 'guitar') {
     try {
       const { GuitarFretboard } = await import('./ui/fretboard.js');
@@ -213,6 +231,10 @@ function mountPanel(tab) {
       tab: tab.id, title: title || tab.label, mode: 'panel', acc: total ? Math.round((100 * correct) / total) : 0, correct, total,
     }),
     makeRng,
+    getBpm: () => +settings.practice.bpm || 80,
+    setBpm: (bpm) => setBpm(bpm),
+    latencyMs: () => +settings.practice.latency || 0,
+    qwerty: () => Boolean(settings.practice.qwerty),
   };
   $('#status').textContent = '';
   try {
@@ -338,6 +360,7 @@ function setBpm(bpm, { fromFader = false } = {}) {
   $('#opt-bpm-range').value = bpm;
   session.setTempo(bpm);
   save();
+  activePanel?.instance.onTempo?.(bpm);
   if (fromFader) toast(`Tempo ♩ = ${bpm}`);
 }
 
@@ -386,7 +409,7 @@ function runAction(id, value) {
   if (id !== 'zoom') wakeLock.poke();
   // Panels get first refusal on transport actions.
   if (activePanel) {
-    if (['play', 'stop', 'forward', 'back'].includes(id) && activePanel.instance.transport?.(id)) return;
+    if (['play', 'stop', 'forward', 'back', 'listen', 'metronome'].includes(id) && activePanel.instance.transport?.(id)) return;
     if (id === 'next') return activePanel.instance.next?.();
     if (!['tempo', 'zoom', 'metronome'].includes(id)) return;
   }
@@ -467,14 +490,15 @@ function syncModeVisibility() {
   document.querySelectorAll('.tempo-only').forEach((el) => { el.hidden = !tempo; });
 }
 
-// ------------------------------------------------------------ note input (MIDI, QWERTY, on-screen, guitar)
+// ------------------------------------------------------------ note input (MIDI, QWERTY, on-screen, audio)
 
-function handleNoteOn(m, velocity, time, source) {
+function handleNoteOn(m, velocity, time, source, channel) {
   wakeLock.poke();
   instrumentView?.setPressed(m, true);
-  if (settings.practice.monitor && source !== 'guitar') audio.noteOn(m, velocity);
+  // Panels that sound notes themselves (drum pads) set playsSound.
+  if (settings.practice.monitor && source !== 'audio' && !activePanel?.instance.playsSound) audio.noteOn(m, velocity);
   if (activePanel) {
-    activePanel.instance.noteOn?.(m, time, velocity, source);
+    activePanel.instance.noteOn?.(m, time, velocity, source, channel);
     return;
   }
   // In free-tempo mode, simply playing starts the exercise.
@@ -484,7 +508,7 @@ function handleNoteOn(m, velocity, time, source) {
 
 function handleNoteOff(m, time, source) {
   instrumentView?.setPressed(m, false);
-  if (settings.practice.monitor && source !== 'guitar') audio.noteOff(m);
+  if (settings.practice.monitor && source !== 'audio') audio.noteOff(m);
   activePanel?.instance.noteOff?.(m, time);
 }
 
@@ -510,7 +534,7 @@ function bindMidi() {
   $('#midi-input').onchange = (e) => midi.setInput(e.target.value);
   $('#midi-output').onchange = (e) => midi.setOutput(e.target.value);
 
-  midi.on('noteon', ({ midi: m, velocity, time, source }) => handleNoteOn(m, velocity, time, source));
+  midi.on('noteon', ({ midi: m, velocity, time, source, channel }) => handleNoteOn(m, velocity, time, source, channel));
   midi.on('noteoff', ({ midi: m, time, source }) => handleNoteOff(m, time, source));
   midi.on('control', (msg) => controller.handle(msg));
   attachComputerKeyboard(midi, () => settings.practice.qwerty);
@@ -551,15 +575,16 @@ function renderController() {
   $('#ctl-reset').onclick = () => controller.resetDefaults();
 }
 
-// ------------------------------------------------------------ guitar audio input
+// ------------------------------------------------------------ audio input (guitar or piano)
 
 async function ensureGuitarInput() {
   if (guitarInput) return guitarInput;
   const { GuitarInput } = await import('./io/guitarinput.js');
   guitarInput = new GuitarInput(audio);
+  await guitarInput.setProfile(settings.instrument);
   setGuitarRange();
-  guitarInput.on('noteon', ({ midi: m, velocity, time }) => handleNoteOn(m, velocity, time, 'guitar'));
-  guitarInput.on('noteoff', ({ midi: m, time }) => handleNoteOff(m, time, 'guitar'));
+  guitarInput.on('noteon', ({ midi: m, velocity, time, source }) => handleNoteOn(m, velocity, time, source));
+  guitarInput.on('noteoff', ({ midi: m, time, source }) => handleNoteOff(m, time, source));
   guitarInput.on('onset', ({ time }) => {
     if (activePanel || !view.loaded) return;
     if (session.state === 'idle' && settings.practice.mode === 'wait' && $('#result').hidden) startPractice();
@@ -570,55 +595,98 @@ async function ensureGuitarInput() {
     $('#gi-level').style.width = `${Math.round(v * 100)}%`;
   });
   guitarInput.on('status', ({ state, message }) => {
-    const b = $('#gi-toggle');
-    b.textContent = state === 'on' ? 'Guitar input: on' : state === 'starting' ? 'Guitar input…' : 'Guitar input: off';
-    b.classList.toggle('on', state === 'on');
-    b.title = message || 'Listen to your guitar through the audio interface';
-    if (state === 'error') $('#status').textContent = `Guitar input: ${message}`;
-    if (state === 'on') refreshGuitarDevices();
+    renderAudioInputButton();
+    if (state === 'error') $('#status').textContent = `${guitarInput.profile.label}: ${message}`;
+    if (state === 'on') refreshAudioDevices();
   });
   // Panels opened before the input existed get it on the next mount; refresh the current one.
   if (activePanel && settings.instrument === 'guitar') selectTab(settings.tab);
   return guitarInput;
 }
 
+function renderAudioInputButton() {
+  const b = $('#gi-toggle');
+  const state = guitarInput?.state || 'off';
+  const label = settings.instrument === 'guitar' ? 'Guitar input' : 'Audio input';
+  b.textContent = state === 'on' ? `${label}: on` : state === 'starting' ? `${label}…` : `${label}: off`;
+  b.classList.toggle('on', state === 'on');
+  b.title = (state === 'on' && guitarInput.message) || (settings.instrument === 'guitar'
+    ? 'Listen to your guitar through the audio interface'
+    : 'Listen to your piano through a microphone or the line in of an audio interface');
+  if (state !== 'on') $('#gi-level').style.width = '0%';
+}
+
+let audioPausedForDrums = false; // the audio input was running when drums were chosen: restart it afterwards
+
+/**
+ * Point the audio input at the current instrument: each instrument has its own pitch band, device, channel and
+ * on/off setting. A running input is restarted with the new instrument's settings (if it is enabled there).
+ * Drums have no audio input: it is paused, and resumes when you switch back.
+ */
+async function syncAudioInput() {
+  if (!guitarInput) return;
+  const running = guitarInput.running || guitarInput.state === 'starting';
+  if (settings.instrument === 'drums') {
+    audioPausedForDrums ||= running;
+    guitarInput.stop();
+    renderAudioInputButton();
+    return;
+  }
+  const wasRunning = running || audioPausedForDrums;
+  audioPausedForDrums = false;
+  guitarInput.stop();
+  await guitarInput.setProfile(settings.instrument);
+  setGuitarRange();
+  const s = inputSettings();
+  $('#gi-channel').value = s.channel;
+  const dev = $('#gi-device');
+  dev.value = [...dev.options].some((o) => o.value === s.device) ? s.device : '';
+  renderAudioInputButton();
+  if (wasRunning && s.enabled) await startAudioInput();
+}
+
 /** Limit pitch detection to the instrument's range (helps against octave errors and noise). */
 function setGuitarRange() {
+  if (settings.instrument !== 'guitar') return; // the piano profile already has the keyboard range
   const s = currentTuning().strings;
   guitarInput?.setRange?.(Math.min(...s) - 1, Math.max(...s) + 24);
 }
 
-async function refreshGuitarDevices() {
+async function refreshAudioDevices() {
   if (!guitarInput) return;
   const sel = $('#gi-device');
   const devices = await guitarInput.listDevices().catch(() => []);
   sel.innerHTML = '';
   sel.add(new Option('Default input', ''));
   devices.forEach((d) => sel.add(new Option(d.label || 'Audio input', d.id)));
-  sel.value = devices.some((d) => d.id === settings.guitar.device) ? settings.guitar.device : '';
+  const want = inputSettings().device;
+  sel.value = devices.some((d) => d.id === want) ? want : '';
 }
 
-async function startGuitarInput() {
+async function startAudioInput() {
+  const s = inputSettings();
   try {
     const gi = await ensureGuitarInput();
     audio.ensure();
-    const ch = settings.guitar.channel === 'mix' ? 'mix' : +settings.guitar.channel;
-    await gi.start(settings.guitar.device || undefined, { channel: ch });
-    settings.guitar.enabled = true;
+    await gi.setProfile(settings.instrument);
+    setGuitarRange();
+    const ch = s.channel === 'mix' ? 'mix' : +s.channel;
+    await gi.start(s.device || '', { channel: ch }); // '' = default input (undefined would reuse the last device)
+    s.enabled = true;
     save();
   } catch (err) {
     console.error(err);
-    $('#status').textContent = `Could not start the guitar input: ${err.message || err}`;
+    $('#status').textContent = `Could not start the audio input: ${err.message || err}`;
   }
 }
 
-function stopGuitarInput() {
+function stopAudioInput() {
   guitarInput?.stop();
-  settings.guitar.enabled = false;
+  inputSettings().enabled = false;
   save();
 }
 
-function bindGuitar() {
+function bindAudioInput() {
   const tuningSel = $('#opt-tuning');
   for (const t of Object.values(TUNINGS)) tuningSel.add(new Option(t.label, t.id));
   tuningSel.value = currentTuning().id;
@@ -629,37 +697,39 @@ function bindGuitar() {
     setGuitarRange();
     if (settings.instrument === 'guitar') selectTab(settings.tab);
   };
-  $('#gi-channel').value = settings.guitar.channel;
+  $('#gi-channel').value = inputSettings().channel;
   $('#gi-channel').onchange = (e) => {
-    settings.guitar.channel = e.target.value;
+    inputSettings().channel = e.target.value;
     save();
-    if (guitarInput && settings.guitar.enabled) startGuitarInput();
+    if (guitarInput && inputSettings().enabled) startAudioInput();
   };
   $('#gi-device').add(new Option('Default input', ''));
   $('#gi-device').onchange = (e) => {
-    settings.guitar.device = e.target.value;
+    inputSettings().device = e.target.value;
     save();
-    if (settings.guitar.enabled) startGuitarInput();
+    if (inputSettings().enabled) startAudioInput();
   };
-  $('#gi-toggle').onclick = () => (settings.guitar.enabled && guitarInput ? stopGuitarInput() : startGuitarInput());
+  $('#gi-toggle').onclick = () => (inputSettings().enabled && guitarInput?.running ? stopAudioInput() : startAudioInput());
   navigator.mediaDevices?.addEventListener?.('devicechange', onAudioDevicesChanged);
 }
 
 /**
- * An audio interface was plugged in or out. Refresh the list; if guitar input is meant to be on but is not running
- * (it stopped when its device went away, or the chosen device was missing), start it again once the device is back.
+ * An audio interface was plugged in or out. Refresh the list; if the audio input is meant to be on but is not
+ * running (it stopped when its device went away, or the chosen device was missing), start it again once the device
+ * is back.
  */
 let deviceChangeTimer = null;
 function onAudioDevicesChanged() {
   clearTimeout(deviceChangeTimer);
   deviceChangeTimer = setTimeout(async () => {
-    if (!guitarInput) return;
-    await refreshGuitarDevices();
-    if (!settings.guitar.enabled || guitarInput.running || settings.instrument !== 'guitar') return;
+    if (!guitarInput || settings.instrument === 'drums') return;
+    await refreshAudioDevices();
+    const s = inputSettings();
+    if (!s.enabled || guitarInput.running) return;
     const devices = await guitarInput.listDevices().catch(() => []);
-    if (!settings.guitar.device || devices.some((d) => d.id === settings.guitar.device)) {
-      await startGuitarInput();
-      if (guitarInput.running) toast('Guitar input reconnected');
+    if (!s.device || devices.some((d) => d.id === s.device)) {
+      await startAudioInput();
+      if (guitarInput.running) toast(`${guitarInput.profile.label} reconnected`);
     }
   }, 500); // devices often appear in several steps
 }
@@ -819,8 +889,8 @@ bindFiles();
 renderController();
 renderHistory();
 await loadModules();
-bindGuitar();
-await setInstrument(settings.instrument === 'guitar' ? 'guitar' : 'piano');
+bindAudioInput();
+await setInstrument(INSTRUMENTS.includes(settings.instrument) ? settings.instrument : 'piano');
 bindPwa(); // after the tabs exist: a file opened with the installed app goes to the Score file tab
 
 // Handle for debugging from the browser console.

@@ -1,10 +1,11 @@
-// Guitar audio input: captures an audio interface input (clean DI signal), runs pitch/onset detection in an
-// AudioWorklet (pitch-worklet.js) and turns it into note events shaped like MidiManager's, plus continuous pitch
-// for the tuner and a chord check (verifyNotes) for steps with several notes.
+// Audio note input (guitar through an audio interface, or an acoustic/digital piano through a mic or line in):
+// runs pitch/onset detection in an AudioWorklet (pitch-worklet.js) and turns it into note events shaped like
+// MidiManager's, plus continuous pitch for the tuner and a chord check (verifyNotes) for steps with several notes.
+// The instrument profile (setProfile) sets the pitch search band and the playable range.
 //
 // Events (on(type, fn) returns an unsubscribe function):
-//   noteon  { midi, velocity, channel: 0, time (performance.now() ms of the onset), source: 'guitar' }
-//   noteoff { midi, channel: 0, time, source: 'guitar' }
+//   noteon  { midi, velocity, channel: 0, time (performance.now() ms of the onset), source: 'audio' }
+//   noteoff { midi, channel: 0, time, source: 'audio' }
 //   pitch   { freq, midi (float), note, cents, clarity, rms, time }
 //   level   { rms, peak, db }
 //   onset   { time }
@@ -16,6 +17,13 @@ const loaded = new WeakSet(); // contexts that already have the worklet module
 
 /** Exact harmonic relations (octave, twelfth, two octaves...): such notes can't be told apart from a lower note. */
 const HARMONIC_INTERVALS = new Set([12, 19, 24, 31, 36]);
+
+/** Per-instrument detection settings: pitch search band (Hz) of the worklet and note range for note events. */
+export const INPUT_PROFILES = {
+  guitar: { label: 'Guitar input', minFreq: 60, maxFreq: 1500, minMidi: 35, maxMidi: 90 },
+  // Below G1 a 40 ms window holds too few periods (and piano bass fundamentals are weak), so the range starts there.
+  piano: { label: 'Audio input', minFreq: 48, maxFreq: 4300, minMidi: 31, maxMidi: 108 },
+};
 
 export class GuitarInput {
   constructor(audioEngine) {
@@ -32,7 +40,8 @@ export class GuitarInput {
     this.node = null;
     this._sensitivity = 0.5;
     this._a4 = 440;
-    this.tracker = new NoteTracker({ a4: this._a4, gateDb: this.gateDb, minMidi: 35, maxMidi: 90 });
+    this.profile = INPUT_PROFILES.guitar;
+    this.tracker = new NoteTracker({ a4: this._a4, gateDb: this.gateDb, minMidi: this.profile.minMidi, maxMidi: this.profile.maxMidi });
     this.lastOnset = null; // { ctxTime, time }
     this.spectrum = null; // last spectrum message from the worklet
     this.waiters = [];
@@ -99,6 +108,18 @@ export class GuitarInput {
     this.tracker.maxMidi = maxMidi;
   }
 
+  /**
+   * Switch the instrument profile ('guitar' | 'piano'): resets the note range, and restarts a running input since
+   * the worklet's pitch band is fixed when it is created. Resolves when done.
+   */
+  async setProfile(name) {
+    const profile = INPUT_PROFILES[name] || INPUT_PROFILES.guitar;
+    const changed = profile !== this.profile;
+    this.profile = profile;
+    this.setRange(profile.minMidi, profile.maxMidi);
+    if (changed && this.running) await this.start();
+  }
+
   /** Audio input devices: [{ id, label }]. Labels need permission, so this asks once if they are hidden. */
   async listDevices() {
     const md = navigator.mediaDevices;
@@ -160,9 +181,12 @@ export class GuitarInput {
         channelCount: 2,
         channelCountMode: 'explicit',
         channelInterpretation: 'speakers', // mono inputs are copied to both channels, so 0, 1 and 'mix' all work
-        processorOptions: { channel: this.channel, gateDb: this.gateDb, onsetDelta: this.onsetDelta, minFreq: 60, maxFreq: 1500 },
+        processorOptions: {
+          channel: this.channel, gateDb: this.gateDb, onsetDelta: this.onsetDelta,
+          minFreq: this.profile.minFreq, maxFreq: this.profile.maxFreq,
+        },
       });
-      // The node must be pulled by the destination to run, but the guitar must not be monitored: zero gain.
+      // The node must be pulled by the destination to run, but the input must not be monitored: zero gain.
       const mute = ctx.createGain();
       mute.gain.value = 0;
       source.connect(node);
@@ -193,7 +217,7 @@ export class GuitarInput {
   stop() {
     const was = this.state;
     this.#teardown();
-    if (was !== 'off') this.#status('off', 'Guitar input off.');
+    if (was !== 'off') this.#status('off', `${this.profile.label} off.`);
   }
 
   /** Pick the channel of a stereo input while running: 'mix' | 0 | 1. */
@@ -204,7 +228,7 @@ export class GuitarInput {
 
   #teardown() {
     const now = performance.now();
-    for (const e of this.tracker.flush()) this.#emit('noteoff', { midi: e.midi, channel: 0, time: now, source: 'guitar' });
+    for (const e of this.tracker.flush()) this.#emit('noteoff', { midi: e.midi, channel: 0, time: now, source: 'audio' });
     if (this.node) {
       this.node.port.postMessage({ type: 'stop' });
       this.node.port.onmessage = null;
@@ -240,8 +264,8 @@ export class GuitarInput {
     }
     for (const e of this.tracker.push({ ...m, time: m.t })) {
       const time = this.toPerfTime(e.time);
-      if (e.type === 'noteon') this.#emit('noteon', { midi: e.midi, velocity: e.velocity, channel: 0, time, source: 'guitar' });
-      else this.#emit('noteoff', { midi: e.midi, channel: 0, time, source: 'guitar' });
+      if (e.type === 'noteon') this.#emit('noteon', { midi: e.midi, velocity: e.velocity, channel: 0, time, source: 'audio' });
+      else this.#emit('noteoff', { midi: e.midi, channel: 0, time, source: 'audio' });
     }
     if (m.f0 > 0 && m.clarity >= 0.6) {
       const midi = freqToMidi(m.f0, this._a4);
