@@ -1,0 +1,520 @@
+/* ==========================================================================
+   Theme: personal
+   Serif body copy, grotesque headers, solarized-light code, Tufte sidenotes.
+   ========================================================================== */
+
+:root {
+  /* -- Palette (solarized light) ------------------------------------------ */
+  --bg:            #fdf6e3; /* solarized base3 */
+  --bg-raised:     #eee8d5; /* solarized base2 */
+  --rule:          #ddd6c1;
+  --text:          #3a3a34; /* dark warm gray */
+  --text-muted:    #5c5c53;
+  --heading:       var(--text);
+  --link:          #268bd2; /* solarized blue */
+  --link-visited:  #6c71c4; /* solarized violet */
+  --accent:        #cb4b16; /* solarized orange, used sparingly */
+
+  /* -- Type ---------------------------------------------------------------- */
+  --font-serif: "Charter", Georgia, Cambria, "Times New Roman", serif;
+  --font-sans:  "Archivo", "Helvetica Neue", Arial, sans-serif;
+  --font-mono:  "Fira Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+  /* -- Layout --------------------------------------------------------------
+     `--measure` is the width of the main text column, tuned so a serif body
+     face lands around 80-100 characters per line. `--sidenote-w` and `--gap`
+     are the margin column used for Tufte-style side notes. */
+  --measure:    46rem;
+  --sidenote-w: 15rem;
+  --gap:        2.5rem;
+}
+
+/* Dark mode: gruvbox counterparts of the palette above. Applied when
+   <html data-theme="dark"> (set by js/theme.js from the saved choice or the
+   OS preference). */
+:root[data-theme="dark"] {
+  --bg:            #282828; /* gruvbox bg0 */
+  --bg-raised:     #3c3836; /* gruvbox bg1 */
+  --rule:          #504945; /* gruvbox bg2 */
+  --text:          #ebdbb2; /* gruvbox fg1 */
+  --text-muted:    #a89984; /* gruvbox gray */
+  --link:          #83a598; /* gruvbox bright blue */
+  --link-visited:  #d3869b; /* gruvbox bright purple */
+  --accent:        #fe8019; /* gruvbox bright orange */
+  color-scheme: dark;
+}
+
+/* -- Reset ----------------------------------------------------------------- */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html {
+  font-size: 106%;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-serif);
+  font-size: 1.125rem;
+  line-height: 1.6;
+  text-rendering: optimizeLegibility;
+}
+
+img, svg, video { max-width: 100%; height: auto; }
+
+a {
+  color: var(--link);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.15em;
+}
+a:visited { color: var(--link-visited); }
+a:hover { color: var(--accent); }
+
+hr {
+  border: none;
+  border-top: 1px solid var(--rule);
+  margin: 2.5rem 0;
+}
+
+/* -- Page scaffold ----------------------------------------------------------
+   The page is wider than the text column on purpose: the extra space on
+   both sides is where side notes live, and it keeps the reading column a
+   comfortable width regardless of viewport. */
+
+.page {
+  max-width: calc(var(--measure) + var(--gap) + var(--sidenote-w) + 6rem);
+  margin: 0 auto;
+  padding: 0 3rem;
+}
+
+.main { padding-bottom: 4rem; }
+
+/* -- Header / nav ------------------------------------------------------------ */
+
+.site-header {
+  position: relative;
+  padding: 3rem 0 0;
+  margin-bottom: 2.5rem;
+}
+
+.site-brand {
+  display: flex;
+  align-items: center;
+  gap: 1.1rem;
+}
+.brand-mark {
+  flex: none;
+  width: 3.4rem;
+  height: 3.4rem;
+  color: var(--text-muted);
+}
+
+.site-title,
+.site-title:visited {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-variant: small-caps;
+  font-size: 1.9rem;
+  color: var(--heading);
+  text-decoration: none;
+  letter-spacing: 0.04em;
+}
+
+.site-subtitle {
+  font-family: var(--font-serif);
+  font-style: italic;
+  color: var(--text-muted);
+  font-size: 1.05rem;
+  margin: 0.4rem 0 0;
+}
+
+.site-nav {
+  margin-top: 1.4rem;
+  border-top: 1px solid var(--text);
+  border-bottom: 1px solid var(--text);
+  padding: 0.55rem 0;
+  /* Same two columns as the article: links centered over the text column,
+     theme toggle in the side-note column. The rules span the full width. */
+  display: grid;
+  grid-template-columns: var(--measure) var(--sidenote-w);
+  column-gap: var(--gap);
+  align-items: baseline;
+}
+.site-nav ul {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.4rem 1.8rem;
+  padding: 0;
+  margin: 0;
+  font-family: var(--font-serif);
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+}
+.site-nav li { position: relative; }
+.site-nav li:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  right: -0.9rem; /* middle of the column gap */
+  width: 4px;
+  height: 4px;
+  margin: -2px -2px 0 0;
+  border-radius: 50%;
+  background: var(--text-muted);
+}
+.site-nav a,
+.site-nav a:visited {
+  color: var(--text);
+  text-decoration: none;
+  border-bottom: 2px solid transparent;
+}
+.site-nav a:hover {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+}
+
+.site-footer {
+  border-top: 1px solid var(--rule);
+  margin-top: 3rem;
+  padding: 1.5rem 0;
+  font-family: var(--font-sans);
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+/* -- Headings ---------------------------------------------------------------- */
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-sans);
+  color: var(--heading);
+  font-weight: 700;
+  line-height: 1.25;
+  margin: 2.2em 0 0.6em;
+  letter-spacing: -0.01em;
+}
+
+h1 { font-size: 2rem; }
+h2 { font-size: 1.5rem; }
+h3 { font-size: 1.2rem; }
+h4, h5, h6 { font-size: 1rem; }
+
+/* -- The "- o -" motif above a post title ------------------------------------ */
+
+.motif {
+  text-align: center;
+  font-family: var(--font-sans);
+  color: var(--text-muted);
+  margin: 0 0 1.5rem;
+  line-height: 1;
+}
+.motif svg { width: 12rem; height: auto; }
+.article-footer { margin-top: 3rem; }
+.article-footer .motif { margin-bottom: 0; }
+
+/* -- Article shell: wide, with the text column left-aligned so there is a
+   consistent right-hand margin for side notes to float into. ---------------- */
+
+.article-header,
+.toc,
+.article-content > *,
+.home-intro > *,
+.list-header,
+.article-footer,
+.post-list {
+  max-width: var(--measure);
+}
+
+.article-title {
+  font-size: 2.2rem;
+  text-align: center;
+  margin-top: 0;
+}
+
+.article-meta {
+  font-family: var(--font-sans);
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  text-align: center;
+  margin-top: 0.5rem;
+}
+.article-meta a.tag { color: var(--text-muted); text-decoration: underline; }
+.article-meta .meta-sep { margin: 0 0.4em; }
+
+/* -- Table of contents -------------------------------------------------------- */
+
+.toc {
+  background: var(--bg-raised);
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  padding: 1.1rem 1.4rem;
+  margin: 0 0 2.5rem;
+  font-family: var(--font-serif);
+  font-size: 1rem;
+}
+
+.toc-title {
+  margin: 0 0 0.5rem;
+  font-weight: 700;
+  font-variant: small-caps;
+  font-size: 0.95rem;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+}
+
+.toc ul {
+  list-style: none;
+  margin: 0;
+  padding-left: 0;
+}
+.toc ul ul { padding-left: 1.1rem; }
+.toc li { margin: 0.25rem 0; }
+.toc #TableOfContents > ul > li > a {
+  font-variant: small-caps;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+.toc ul ul a { font-style: italic; }
+.toc a { text-decoration: none; }
+.toc a:hover { text-decoration: underline; }
+
+/* -- Prose -------------------------------------------------------------------- */
+
+.article-content p,
+.article-content ul,
+.article-content ol,
+.article-content blockquote,
+.home-intro p {
+  margin: 0 0 1.3em;
+}
+
+.article-content blockquote {
+  margin-left: 0;
+  padding-left: 1.2em;
+  border-left: 3px solid var(--rule);
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.article-content ul, .article-content ol { padding-left: 1.4em; }
+
+table {
+  border-collapse: collapse;
+  margin: 1.5em 0;
+  font-size: 0.95em;
+  max-width: var(--measure);
+}
+th, td {
+  border: 1px solid var(--rule);
+  padding: 0.4em 0.8em;
+  text-align: left;
+}
+th { font-family: var(--font-sans); background: var(--bg-raised); }
+
+/* -- Code ----------------------------------------------------------------------
+   Inline code and fenced blocks use Fira Mono. Fenced blocks are colored by
+   Chroma's solarized-light style (see css/chroma.css); this file only sets
+   font and spacing so the two stay in sync. */
+
+code, kbd, samp {
+  font-family: var(--font-mono);
+  font-size: 0.88em;
+  background: var(--bg-raised);
+  border-radius: 3px;
+  padding: 0.1em 0.3em;
+}
+
+pre {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  line-height: 1.55;
+  overflow-x: auto;
+  border-radius: 6px;
+  border: 1px solid var(--rule);
+}
+
+pre code {
+  background: none;
+  padding: 0;
+  border-radius: 0;
+}
+
+.chroma {
+  padding: 1rem 1.2rem;
+  border-radius: 6px;
+  border: 1px solid var(--rule);
+}
+
+/* -- Lists of posts (home page and section lists) ------------------------------ */
+
+.list-title {
+  font-size: 2.2rem;
+  text-align: center;
+  margin-top: 0;
+}
+
+.post-list {
+  list-style: none;
+  padding: 0;
+  margin: 2rem 0 0;
+}
+
+.post-list-item {
+  padding: 1.3rem 0;
+  border-top: 1px solid var(--rule);
+}
+.post-list-item:first-child { border-top: none; }
+
+.post-list-title {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 700;
+  font-size: 1.3rem;
+  text-decoration: none;
+  color: var(--heading);
+}
+.post-list-title:visited { color: var(--heading); }
+.post-list-title:hover { color: var(--accent); }
+
+.post-list-date {
+  display: block;
+  font-family: var(--font-sans);
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-top: 0.2rem;
+}
+
+.post-list-summary {
+  margin: 0.6rem 0 0;
+  color: var(--text-muted);
+}
+
+/* -- Pagination ------------------------------------------------------------ */
+
+.pagination {
+  font-family: var(--font-sans);
+  font-size: 0.9rem;
+  display: flex;
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+
+/* ==========================================================================
+   Tufte-style side notes.
+
+   Hugo's Goldmark renderer emits standard footnotes (a <sup> reference in
+   the text, and a list at the bottom of the article). js/sidenotes.js walks
+   that markup at load time and moves each definition into a floated side
+   note positioned right where its reference occurs, leaving the bottom list
+   as a progressive-enhancement fallback for no-JS / narrow-screen contexts.
+   ========================================================================== */
+
+.footnotes {
+  max-width: var(--measure);
+  font-family: var(--font-sans);
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  border-top: 1px solid var(--rule);
+  padding-top: 1rem;
+  margin-top: 2rem;
+}
+
+/* .footnotes is hidden by sidenotes.js (via the `hidden` attribute) once it
+   has successfully moved the notes into the margin; without JS it's left
+   visible as a normal footnote list. */
+
+.sidenote-ref {
+  font-family: var(--font-sans);
+  font-size: 0.75em;
+  vertical-align: super;
+  color: var(--accent);
+  text-decoration: none;
+  cursor: pointer;
+  padding: 0 0.1em;
+}
+
+.sidenote-toggle { display: none; }
+.sidenote-checkbox { display: none; }
+
+.sidenote {
+  float: right;
+  clear: right;
+  width: var(--sidenote-w);
+  margin-right: calc(-1 * (var(--sidenote-w) + var(--gap)));
+  margin-top: 0.15em;
+  margin-bottom: 0.5em;
+  font-family: var(--font-sans);
+  font-size: 0.8rem;
+  line-height: 1.5;
+  color: var(--text-muted);
+}
+.sidenote .sidenote-number {
+  font-weight: 700;
+  color: var(--accent);
+  margin-right: 0.3em;
+}
+.sidenote p { margin: 0; display: inline; }
+.sidenote p + p { display: block; margin-top: 0.5em; }
+
+@media (max-width: 920px) {
+  .sidenote {
+    float: none;
+    clear: both;
+    display: none;
+    width: auto;
+    margin: 0.6rem 0 0.6rem 0;
+    padding: 0.5rem 0 0.5rem 0.9rem;
+    border-left: 2px solid var(--rule);
+  }
+  .sidenote-toggle {
+    display: inline;
+    color: var(--accent);
+    text-decoration: underline;
+    cursor: pointer;
+    font-size: 0.8em;
+    font-family: var(--font-sans);
+  }
+  .sidenote-checkbox:checked ~ .sidenote { display: block; }
+}
+
+@media print {
+  .sidenote-toggle { display: none; }
+  .sidenote {
+    float: none;
+    display: block;
+    width: auto;
+    margin: 0.4em 0;
+    border-left: 2px solid var(--rule);
+    padding-left: 0.8em;
+  }
+}
+
+/* -- Small screens: collapse the wide margins ------------------------------- */
+
+@media (max-width: 920px) {
+  .site-nav { grid-template-columns: 1fr auto; column-gap: 1rem; }
+  .theme-toggle { justify-self: end; }
+  .page { padding: 0 1.25rem; }
+  .article-title { font-size: 1.7rem; }
+}
+
+/* -- Theme toggle ------------------------------------------------------------- */
+
+.theme-toggle {
+  justify-self: end;
+  font-family: var(--font-serif);
+  font-size: 0.95rem;
+  font-style: italic;
+  color: var(--text-muted);
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+.theme-toggle:hover { color: var(--accent); text-decoration: underline; }
+@media print { .theme-toggle { display: none; } }

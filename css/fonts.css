@@ -1,0 +1,29 @@
+/* Self-hosted webfonts. Archivo and Fira Mono are licensed under the SIL Open
+   Font License and are bundled with this theme. Charter is a classic serif
+   that ships with most operating systems; no font file is bundled for it, so
+   it falls back to Georgia/Cambria where it isn't installed. */
+
+@font-face {
+  font-family: "Archivo";
+  src: url("../fonts/archivo-variable.woff2") format("woff2-variations"),
+       url("../fonts/archivo-variable.woff2") format("woff2");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Fira Mono";
+  src: url("../fonts/fira-mono-400.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Fira Mono";
+  src: url("../fonts/fira-mono-700.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
