@@ -1,96 +1,41 @@
 baseURL = "https://ptorras.github.io"
 title = "Pau Torras"
 languageCode = "en-us"
-theme = "terminal"
+theme = "personal"
 pagination.pagerSize = 5
 copyright = "Pau Torras"
 
 [params]
-  colortheme = "dark" # dark, light, white, or classic
-  rss = false
-  mainSectionTitle = "Blog"
-  showLanguageSelector = false
-  Toc = true
-  readingTime = true
-
-  showAllPostsArchive = true # default
-  tocInline = true
-  mathjax = true
-
-  # Home page settings
+  subtitle = "A place where I write about my ongoing research and other endeavours."
   description = "A place where I write about my ongoing research and other endeavours."
-  mainSection = "posts" # your main section
-  showAllPostsOnHomePage = true # default
-  postsOnHomePage = 5 # this option will be ignored if showAllPostsOnHomePage is set to true
-  tagsOverview = true # show tags overview by default.
+  copyright = "Pau Torras"
+  dateFormat = "2006-01-02"
+  showReadingTime = true
+  mainSection = "posts"
+  postsOnHomePage = 5
+  rss = false
 
-  # https://gohugo.io/functions/format/#hugo-date-and-time-templating-reference
-  dateFormat = "2006-01-02" # default
+[[menu.main]]
+  name = "About Me"
+  url = "/resume"
+[[menu.main]]
+  name = "Blog"
+  url = "/posts"
+[[menu.main]]
+  name = "Teaching & Talks"
+  url = "/teaching/"
+[[menu.main]]
+  name = "Music Practice"
+  url = "/music-practice/"
 
-  # Post page settings
-  show_updated = true # default
-  showReadTime = true # default
-
-[languages]
-  [languages.en]
-    languageName = "English"
-    title = "Pau Torras"
-    [languages.en.params]
-      subtitle = "A place where I write about my ongoing research and other endeavours."
-      owner = "Pau Torras"
-      keywords = ""
-      copyright = "Pau Torras"
-      menuMore = "Show more"
-      readMore = "Read more"
-      readOtherPosts = "Read other posts"
-      newerPosts = "Newer posts"
-      olderPosts = "Older posts"
-      missingContentMessage = "Page not found..."
-      missingBackButtonLabel = "Back to home page"
-      minuteReadingTime = "min read"
-      words = "words"
-
-      [languages.en.params.logo]
-        logoText = "Pau Torras"
-        logoHomeLink = "/"
-
-      [languages.en.menu]
-        [[languages.en.menu.main]]
-          identifier = "about"
-          name = "About Me"
-          url = "/resume"
-        [[languages.en.menu.main]]
-          identifier = "showcase"
-          name = "Blog"
-          url = "/posts"
-  # [languages.ca]
-  #   languageName = "Català"
-  #   title = "Pau Torras"
-  #   [languages.ca.params]
-  #     subtitle = "El lloc on escric bajanades sobre la meva recerca i altres afers que m'ocupin el temps"
-  #     owner = "Pau Torras"
-  #     keywords = ""
-  #     copyright = "Pau Torras"
-  #     menuMore = "Mostrar-ne més"
-  #     readMore = "Llegir-ne més"
-  #     readOtherPosts = "Llegeix altres entrades"
-  #     newerPosts = "Noves entrades"
-  #     olderPosts = "Entrades anteriors"
-  #     missingContentMessage = "Pàgina no trobada..."
-  #     missingBackButtonLabel = "Torna a la pàgina principal"
-  #     minuteReadingTime = "min de lectura"
-  #     words = "paraules"
-
-  #     [languages.ca.params.logo]
-  #       logoText = "Pau Torras"
-  #       logoHomeLink = "/"
-
-  #     [languages.ca.menu]
-  #       [[languages.ca.menu.main]]
-  #         identifier = "about"
-  #         name = "Sobre mi"
-  #         url = "/resume_ca"
-  #       [[languages.ca.menu.main]]
-  #         identifier = "showcase"
-  #         name = "Blog"
-  #         url = "/posts_ca"
+[markup]
+  [markup.highlight]
+    noClasses = false
+    style = "solarized-light"
+  [markup.goldmark]
+    [markup.goldmark.extensions]
+      [markup.goldmark.extensions.typographer]
+        disable = false
+  [markup.tableOfContents]
+    startLevel = 2
+    endLevel = 4
