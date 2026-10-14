@@ -5,7 +5,7 @@
 
   function render() {
     var dark = root.getAttribute("data-theme") === "dark";
-    btn.textContent = dark ? "Light mode" : "Dark mode";
+    btn.setAttribute("aria-label", dark ? "Switch to light mode" : "Switch to dark mode");
     btn.setAttribute("aria-pressed", dark ? "true" : "false");
   }
 
