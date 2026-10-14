@@ -232,6 +232,8 @@ h4, h5, h6 { font-size: 1rem; }
 .article-content > *,
 .home-intro > *,
 .list-header,
+.list > .motif,
+.home > .motif,
 .article-footer,
 .post-list {
   max-width: var(--measure);
@@ -574,6 +576,14 @@ pre code {
 
 /* Figurine notation: white pieces from the sprite, recoloured to the text. */
 .san > span { white-space: nowrap; }
+.san-letter {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
 .figurine {
   width: 1.1em;
   height: 1.1em;
